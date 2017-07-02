@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <EditTextPreference
+        android:title="Rtp Port"
+        android:defaultValue="@string/pref_default_value_rtp_port"
+        android:key="@string/pref_key_rtp_port"/>
+    <EditTextPreference
+        android:title="Ctrl Port"
+        android:defaultValue="@string/pref_default_value_ctrl_port"
+        android:key="@string/pref_key_ctrl_port"/>
+    <EditTextPreference
+        android:title="Image Port"
+        android:defaultValue="@string/pref_default_value_image_port"
+        android:key="@string/pref_key_image_port"/>
+    <EditTextPreference
+        android:title="Filter Threshold"
+        android:defaultValue="@string/pref_default_value_filter_threshold"
+        android:key="@string/pref_key_filter_threshold"/>
+    <EditTextPreference
+        android:title="Account Level"
+        android:defaultValue="@string/pref_default_value_account_level"
+        android:key="@string/pref_key_account_level"/>
+</PreferenceScreen>
