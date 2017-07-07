@@ -8,10 +8,6 @@
     <string name="add_send_ip_address">送信先追加</string>
     <string name="add_foward_ip_address">転送先追加</string>
     <string name="ip_address">IPアドレス</string>
-    <string name="camera">camera</string>
-    <string name="mic">mic</string>
-    <string name="movie">movie</string>
-    <string name="sound">voice</string>
     <string name="mic_threshold">閾値:</string>
     <string name="speex_compress_level">品質:</string>
     <string name="filter">filter</string>

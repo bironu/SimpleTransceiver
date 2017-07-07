@@ -1,13 +1,5 @@
 package com.example.bironu.simpletransceiver.service;
 
-import java.net.InetAddress;
-import java.net.SocketException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
-
 import android.app.Service;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -30,6 +22,17 @@ import com.example.bironu.simpletransceiver.codecs.Codec;
 import com.example.bironu.simpletransceiver.codecs.ulaw;
 import com.example.bironu.simpletransceiver.main.PacketOutputter;
 
+import java.net.InetAddress;
+import java.net.SocketException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
+
+/**
+ *
+ */
 public class RtpService extends Service
 {
 	public static final String TAG = RtpService.class.getSimpleName();

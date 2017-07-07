@@ -1,4 +1,12 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <data>
+        <import type="android.view.View"/>
+        <import type="java.util.List"/>
+        <variable name="mainViewModel" type="com.example.bironu.simpletransceiver.main.MainViewModel"/>
+    </data>
+
+    <RelativeLayout
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -12,51 +20,45 @@
         android:id="@+id/view_vcenter"
         android:layout_width="wrap_content"
         android:layout_height="1dp"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentEnd="true"
         android:layout_centerVertical="true"
         android:background="@android:color/black" />
 
     <TextView
         android:id="@+id/text_local_ip_address"
+        android:text="@{mainViewModel.localIpAddress}"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
 
     <ToggleButton
         android:id="@+id/toggle_send"
+        android:checked="@={mainViewModel.send}"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/text_local_ip_address"
         android:textOff="@string/send_off"
         android:textOn="@string/send_on" />
 
-    <CheckBox
-        android:id="@+id/check_mic"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignBaseline="@+id/toggle_send"
-        android:layout_toRightOf="@+id/toggle_send"
-        android:checked="true"
-        android:text="@string/mic" />
-
     <TextView
-        android:visibility="gone"
         android:id="@+id/text_rtp_receive_status"
+        android:visibility="@{mainViewModel.receiveRtp?View.VISIBLE:View.GONE}"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/toggle_send"
-        android:layout_alignParentLeft="true"
-        android:text="@string/rtp_receive" />"
+        android:layout_alignParentStart="true"
+        android:text="@string/rtp_receive" />
 
     <CheckBox
         android:id="@+id/check_speaker"
+        android:checked="@={mainViewModel.checkSpeaker}"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/view_vcenter"
         android:text="@string/speaker" />
 
     <Button
-        android:id="@+id/button_add_foward_ip_address"
+        android:id="@+id/button_add_forward_ip_address"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/check_speaker"
@@ -64,21 +66,24 @@
         android:text="@string/add_foward_ip_address" />
 
     <EditText
-        android:id="@+id/edit_foward_ip_address"
+        android:id="@+id/edit_forward_ip_address"
+        android:text="@={mainViewModel.forwardIpAddress}"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignBaseline="@+id/button_add_foward_ip_address"
-        android:layout_alignParentRight="true"
-        android:layout_toRightOf="@+id/button_add_foward_ip_address"
+        android:layout_alignBaseline="@+id/button_add_forward_ip_address"
+        android:layout_alignParentEnd="true"
+        android:layout_toEndOf="@+id/button_add_forward_ip_address"
         android:inputType="text" />
 
     <ListView
-        android:id="@+id/list_foward_ip_address"
+        android:id="@+id/list_forward_ip_address"
+        app:items="@{mainViewModel.forwardIpAddressList}"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentLeft="true"
-        android:layout_below="@+id/button_add_foward_ip_address" />
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/button_add_forward_ip_address" />
 
 </RelativeLayout>
+    </layout>
