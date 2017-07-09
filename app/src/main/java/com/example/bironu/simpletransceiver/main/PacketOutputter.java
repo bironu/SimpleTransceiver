@@ -1,5 +1,8 @@
 package com.example.bironu.simpletransceiver.main;
 
+import com.example.bironu.simpletransceiver.CommonUtils;
+import com.example.bironu.simpletransceiver.DataOutputter;
+
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
@@ -7,11 +10,6 @@ import java.net.InetAddress;
 import java.net.SocketException;
 import java.util.ArrayList;
 import java.util.List;
-
-import android.util.Log;
-
-import com.example.bironu.simpletransceiver.CommonSettings;
-import com.example.bironu.simpletransceiver.DataOutputter;
 
 public class PacketOutputter
 implements DataOutputter
@@ -70,10 +68,10 @@ implements DataOutputter
 				mPacket.setAddress(target.address);
 				mPacket.setPort(target.port);
 				mSocket.send(mPacket);
-				if(CommonSettings.DEBUG_LEVEL >= Log.DEBUG) Log.d(TAG, "packet send target = " + target.address + ":" + target.port);
+				CommonUtils.logd(TAG, "packet send target = " + target.address + ":" + target.port);
 			}
 		}
-		if(CommonSettings.DEBUG_LEVEL >= Log.DEBUG) Log.d(TAG, "packet send " + length + " bytes");
+		CommonUtils.logd(TAG, "packet send " + length + " bytes");
 	}
 
 	@Override

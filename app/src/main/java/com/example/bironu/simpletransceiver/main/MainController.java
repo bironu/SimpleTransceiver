@@ -19,6 +19,7 @@ class MainController
     , AdapterView.OnItemClickListener
     , ServiceConnection
 {
+    public static final String TAG = MainController.class.getSimpleName();
     private final MainModel mMainModel;
 
     MainController(MainModel mainModel) {

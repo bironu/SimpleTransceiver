@@ -6,9 +6,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.media.AudioManager;
 import android.text.TextUtils;
-import android.util.Log;
 
 import com.example.bironu.simpletransceiver.CommonSettings;
+import com.example.bironu.simpletransceiver.CommonUtils;
 import com.example.bironu.simpletransceiver.Preferences;
 import com.example.bironu.simpletransceiver.service.RtpService;
 
@@ -65,7 +65,7 @@ class MainModel {
                 // 送信開始失敗したら
                 if (!mRtpServiceBinder.beginRtpSender()) {
                     // 送信取りやめ
-                    mMainViewModel.setIsSend(false);
+                    mMainViewModel.setSendMode(false);
                 }
             }
             else {
@@ -91,7 +91,7 @@ class MainModel {
      * @param iBinder
      */
     void onServiceConnected(ComponentName componentName, RtpService.RtpServiceBinder iBinder) {
-        Log.d(TAG, "onServiceConnected : "+componentName);
+        CommonUtils.logd(TAG, "onServiceConnected : "+componentName);
         mRtpServiceBinder = iBinder;
         mMainViewModel.setForwardIpAddressList(mRtpServiceBinder.getAddressList());
     }
@@ -101,7 +101,7 @@ class MainModel {
      * @param componentName
      */
     void onServiceDisconnected(ComponentName componentName) {
-        Log.d(TAG, "onServiceDisconnected : "+componentName);
+        CommonUtils.logd(TAG, "onServiceDisconnected : "+componentName);
         mRtpServiceBinder = null;
     }
 
@@ -112,16 +112,16 @@ class MainModel {
     void onReceive(Intent intent) {
         final String action = intent.getAction();
         if(CommonSettings.ACTION_NET_CONN_CONNECTIVITY_CHANGE.equals(action)) {
-            if(CommonSettings.DEBUG_LEVEL >= Log.DEBUG) Log.d(TAG, "receive android.net.conn.CONNECTIVITY_CHANGE !!!");
+            CommonUtils.logd(TAG, "receive android.net.conn.CONNECTIVITY_CHANGE !!!");
             mMainViewModel.setLocalIpAddress();
         }
         else if(RtpService.ACTION_BEGIN_RTP_RECEIVE.equals(action)) {
-            if(CommonSettings.DEBUG_LEVEL >= Log.DEBUG) Log.d(TAG, "receive RtpService.ACTION_BEGIN_RTP_RECEIVE !!!");
+            CommonUtils.logd(TAG, "receive RtpService.ACTION_BEGIN_RTP_RECEIVE !!!");
             mMainViewModel.setIsReceiveRtp(true);
-            mMainViewModel.setIsSend(false);
+            mMainViewModel.setSendMode(false);
         }
         else if(RtpService.ACTION_END_RTP_RECEIVE.equals(action)) {
-            if(CommonSettings.DEBUG_LEVEL >= Log.DEBUG) Log.d(TAG, "receive RtpService.ACTION_END_RTP_RECEIVE !!!");
+            CommonUtils.logd(TAG, "receive RtpService.ACTION_END_RTP_RECEIVE !!!");
             mMainViewModel.setIsReceiveRtp(false);
         }
         //else {

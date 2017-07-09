@@ -1,5 +1,8 @@
 package com.example.bironu.simpletransceiver.main;
 
+import com.example.bironu.simpletransceiver.CommonUtils;
+import com.example.bironu.simpletransceiver.DataInputter;
+
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
@@ -8,11 +11,6 @@ import java.net.SocketException;
 import java.net.SocketTimeoutException;
 import java.util.ArrayList;
 import java.util.List;
-
-import android.util.Log;
-
-import com.example.bironu.simpletransceiver.CommonSettings;
-import com.example.bironu.simpletransceiver.DataInputter;
 
 public class PacketInputter
 implements DataInputter
@@ -32,11 +30,11 @@ implements DataInputter
 		mSocket = new DatagramSocket(port, addr);
 		mBuffer = new byte[bufSize];
 		mPacket = new DatagramPacket(mBuffer, mBuffer.length);
-		if(CommonSettings.DEBUG_LEVEL >= Log.DEBUG) Log.d(TAG, "socket LocalAddress = "+mSocket.getLocalAddress().toString());
-		if(CommonSettings.DEBUG_LEVEL >= Log.DEBUG) Log.d(TAG, "socket LocalSocketAddress = "+mSocket.getLocalSocketAddress().toString());
-		if(CommonSettings.DEBUG_LEVEL >= Log.DEBUG) Log.d(TAG, "socket LocalPort = "+mSocket.getLocalPort());
-		if(CommonSettings.DEBUG_LEVEL >= Log.DEBUG) Log.d(TAG, "socket SendBufferSize = "+mSocket.getSendBufferSize());
-		if(CommonSettings.DEBUG_LEVEL >= Log.DEBUG) Log.d(TAG, "socket ReceiveBufferSize = "+mSocket.getReceiveBufferSize());
+		CommonUtils.logd(TAG, "socket LocalAddress = "+mSocket.getLocalAddress().toString());
+		CommonUtils.logd(TAG, "socket LocalSocketAddress = "+mSocket.getLocalSocketAddress().toString());
+		CommonUtils.logd(TAG, "socket LocalPort = "+mSocket.getLocalPort());
+		CommonUtils.logd(TAG, "socket SendBufferSize = "+mSocket.getSendBufferSize());
+		CommonUtils.logd(TAG, "socket ReceiveBufferSize = "+mSocket.getReceiveBufferSize());
 	}
 	
 	public void setTimeout(int timeout) {
@@ -67,8 +65,8 @@ implements DataInputter
 			mPacket.setLength(mBuffer.length);
 			mSocket.receive(mPacket);
 			result = mPacket.getLength();
-			if(CommonSettings.DEBUG_LEVEL >= Log.DEBUG) Log.d(TAG, "packet receive " + mPacket.getLength() + " bytes");
-			if(CommonSettings.DEBUG_LEVEL >= Log.DEBUG) Log.d(TAG, "socket receive : addr = "+mPacket.getAddress()+ ":"+mPacket.getPort());
+			CommonUtils.logd(TAG, "packet receive " + mPacket.getLength() + " bytes");
+			CommonUtils.logd(TAG, "socket receive : addr = "+mPacket.getAddress()+ ":"+mPacket.getPort());
 			for(Filter filter : mFilterList) {
 				// フィルタに引っかかったら
 				if(filter.filtering(mPacket)) {

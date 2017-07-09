@@ -1,13 +1,13 @@
 package com.example.bironu.simpletransceiver;
 
+import android.util.Log;
+
 import java.net.Inet4Address;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.net.SocketException;
 import java.util.Enumeration;
 import java.util.Random;
-
-import android.util.Log;
 
 public class CommonUtils {
 
@@ -32,29 +32,28 @@ public class CommonUtils {
 			}
 		}
 		catch (SocketException ex) {
-			Log.i("SocketException ", ex.toString());
+			loge("SocketException ", ex.toString());
 		}
 		return result;
 	}
 
-	
-//	public static void logv(String tag, String msg) {
-//		if(CommonSettings.DEBUG_LEVEL >= Log.VERBOSE) Log.v(tag, msg);
-//	}
-//	
-//	public static void logd(String tag, String msg) {
-//		if(CommonSettings.DEBUG_LEVEL >= Log.DEBUG) Log.d(tag, msg);
-//	}
-//	
-//	public static void logi(String tag, String msg) {
-//		if(CommonSettings.DEBUG_LEVEL >= Log.INFO) Log.i(tag, msg);
-//	}
-//
-//	public static void logw(String tag, String msg) {
-//		if(CommonSettings.DEBUG_LEVEL >= Log.WARN) Log.w(tag, msg);
-//	}
-//
-//	public static void loge(String tag, String msg) {
-//		if(CommonSettings.DEBUG_LEVEL >= Log.ERROR) Log.e(tag, msg);
-//	}
+	public static void logv(String tag, String msg) {
+		if(CommonSettings.DEBUG_LEVEL >= Log.VERBOSE) Log.v(tag, msg);
+	}
+
+	public static void logd(String tag, String msg) {
+		if(CommonSettings.DEBUG_LEVEL >= Log.DEBUG) Log.d(tag, msg);
+	}
+
+	public static void logi(String tag, String msg) {
+		if(CommonSettings.DEBUG_LEVEL >= Log.INFO) Log.i(tag, msg);
+	}
+
+	public static void logw(String tag, String msg) {
+		if(CommonSettings.DEBUG_LEVEL >= Log.WARN) Log.w(tag, msg);
+	}
+
+	public static void loge(String tag, String msg) {
+		if(CommonSettings.DEBUG_LEVEL >= Log.ERROR) Log.e(tag, msg);
+	}
 }

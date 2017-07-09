@@ -1,16 +1,15 @@
 package com.example.bironu.simpletransceiver.main;
 
-import java.io.IOException;
-
 import android.media.AudioFormat;
 import android.media.AudioManager;
 import android.media.AudioTrack;
-import android.util.Log;
 
 import com.example.bironu.simpletransceiver.CommonSettings;
 import com.example.bironu.simpletransceiver.CommonUtils;
 import com.example.bironu.simpletransceiver.DataOutputter;
 import com.example.bironu.simpletransceiver.codecs.Codec;
+
+import java.io.IOException;
 
 public class SpeakerOutputter
 implements DataOutputter
@@ -29,13 +28,13 @@ implements DataOutputter
 		CommonUtils.noise(buf, buf.length, 1024);
 		mAudioTrack.write(buf, 0, buf.length);
 		mAudioTrack.play();
-		if(CommonSettings.DEBUG_LEVEL >= Log.DEBUG) Log.d(TAG, "MIN_BUF_SIZE = "+MIN_BUF_SIZE);
+		CommonUtils.logd(TAG, "MIN_BUF_SIZE = "+MIN_BUF_SIZE);
 	}
 
 	@Override
 	public void output(byte[] buf, int length) throws IOException {
 		final int writeLength = mAudioTrack.write(buf, 0, length);
-		if(CommonSettings.DEBUG_LEVEL >= Log.DEBUG) Log.d(TAG, "speaker write "+writeLength+" byte");
+		CommonUtils.logd(TAG, "speaker write "+writeLength+" byte");
 	}
 
 	@Override

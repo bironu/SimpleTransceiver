@@ -1,5 +1,19 @@
 package com.example.bironu.simpletransceiver.service;
 
+import android.annotation.TargetApi;
+import android.media.AudioFormat;
+import android.media.AudioRecord;
+import android.media.MediaRecorder.AudioSource;
+import android.media.audiofx.AcousticEchoCanceler;
+import android.media.audiofx.NoiseSuppressor;
+import android.os.Build;
+
+import com.example.bironu.simpletransceiver.CommonSettings;
+import com.example.bironu.simpletransceiver.CommonUtils;
+import com.example.bironu.simpletransceiver.DataInputter;
+import com.example.bironu.simpletransceiver.codecs.Codec;
+import com.example.bironu.simpletransceiver.rtp.RtpPacket;
+
 import java.io.IOException;
 import java.net.SocketException;
 import java.security.InvalidKeyException;
@@ -13,21 +27,6 @@ import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.KeyGenerator;
 import javax.crypto.NoSuchPaddingException;
 import javax.crypto.ShortBufferException;
-
-
-import android.annotation.TargetApi;
-import android.media.AudioFormat;
-import android.media.AudioRecord;
-import android.media.MediaRecorder.AudioSource;
-import android.media.audiofx.AcousticEchoCanceler;
-import android.media.audiofx.NoiseSuppressor;
-import android.os.Build;
-import android.util.Log;
-
-import com.example.bironu.simpletransceiver.CommonSettings;
-import com.example.bironu.simpletransceiver.DataInputter;
-import com.example.bironu.simpletransceiver.codecs.Codec;
-import com.example.bironu.simpletransceiver.rtp.RtpPacket;
 
 public class EncodingMicInputter
 implements DataInputter
@@ -56,7 +55,7 @@ implements DataInputter
 		mBuffer = new byte[codec.frame_size() + RtpPacket.MAX_HEADER_LENGTH];
 		mReadBuffer = new short[codec.frame_size()];
 		mAudioRecord = new AudioRecord(AudioSource.DEFAULT, codec.samp_rate(), CHANNEL_CONFIG, CommonSettings.AUDIO_FORMAT, MIN_BUF_SIZE);
-		Log.d(TAG, "AudioRecord.getState() = " + mAudioRecord.getState());
+		CommonUtils.logd(TAG, "AudioRecord.getState() = " + mAudioRecord.getState());
 		aec();
 		mAudioRecord.startRecording();
 		mRtpSession = rtpSession;
@@ -64,14 +63,14 @@ implements DataInputter
 	}
 
 	private int mPrevRawData;
-	StringBuilder sb = new StringBuilder(6 * 160);
+//	StringBuilder sb = new StringBuilder(6 * 160);
 
 	@Override
 	public int input() throws IOException {
 		final int length = mAudioRecord.read(mReadBuffer, 0, mReadBuffer.length);
-		if(CommonSettings.DEBUG_LEVEL >= Log.DEBUG) Log.d(TAG, "mic read " + length*2 + " byte");
+		CommonUtils.logd(TAG, "mic read " + length*2 + " byte");
 		if(mThreshold > 0) {
-			if(CommonSettings.DEBUG_LEVEL >= Log.INFO) sb.setLength(0);
+//			if(CommonSettings.DEBUG_LEVEL >= Log.INFO) sb.setLength(0);
 			for(int i = 0; i < length; ++i) {
 //				final int aaa = mReadBuffer[i] / mThreshold * mThreshold * 5 / 2;
 //				int avg = (mPrevRawData * 12 + aaa * 4) / 16;
@@ -87,26 +86,26 @@ implements DataInputter
 				if(-mThreshold < aaa && aaa < mThreshold) {
 					mReadBuffer[i] = (short) (aaa / 2);
 				}
-				if(CommonSettings.DEBUG_LEVEL >= Log.INFO) sb.append(mReadBuffer[i]).append(',');
+//				if(CommonSettings.DEBUG_LEVEL >= Log.INFO) sb.append(mReadBuffer[i]).append(',');
 			}
 		}
 		else {
-			if(CommonSettings.DEBUG_LEVEL >= Log.INFO) {
-				sb.setLength(0);
-				for(int i = 0; i < length; ++i) {
-					sb.append(mReadBuffer[i]).append(',');
-				}
-			}
+//			if(CommonSettings.DEBUG_LEVEL >= Log.INFO) {
+//				sb.setLength(0);
+//				for(int i = 0; i < length; ++i) {
+//					sb.append(mReadBuffer[i]).append(',');
+//				}
+//			}
 		}
 		
 		final int encResult = mCodec.encode(mReadBuffer, 0, mBuffer, length);
 		int result = 0;
-		if(CommonSettings.DEBUG_LEVEL >= Log.DEBUG) Log.d(TAG, "encode result " + length*2 + " byte -> "+encResult+" byte");
-		if(CommonSettings.DEBUG_LEVEL >= Log.INFO) Log.d(TAG, sb.toString());
+		CommonUtils.logd(TAG, "encode result " + length*2 + " byte -> "+encResult+" byte");
+//		if(CommonSettings.DEBUG_LEVEL >= Log.INFO) Log.d(TAG, sb.toString());
 		try {
 			if(mCipher != null){
 				int cryptoLength = mCipher.doFinal(mBuffer, RtpPacket.HEADER_LENGTH, encResult, mBuffer, RtpPacket.HEADER_LENGTH);
-				if(CommonSettings.DEBUG_LEVEL >= Log.DEBUG) Log.d(TAG, "crypto length = " + cryptoLength + " byte");
+				CommonUtils.logd(TAG, "crypto length = " + cryptoLength + " byte");
 				result = cryptoLength + RtpPacket.HEADER_LENGTH;
 			}
 		}
@@ -148,19 +147,19 @@ implements DataInputter
 	private void aec() {
 		if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
 			if (AcousticEchoCanceler.isAvailable()) {
-				Log.d(TAG, "AcousticEchoCanceler isAvailable");
+				CommonUtils.logd(TAG, "AcousticEchoCanceler isAvailable");
 				mAcousticEchoCanceler = AcousticEchoCanceler.create(mAudioRecord.getAudioSessionId());
 				if (mAcousticEchoCanceler != null && !mAcousticEchoCanceler.getEnabled()) {
 					mAcousticEchoCanceler.setEnabled(true);
-					Log.d(TAG, "AcousticEchoCanceler enabled = "+mAcousticEchoCanceler.getEnabled());
+					CommonUtils.logd(TAG, "AcousticEchoCanceler enabled = "+mAcousticEchoCanceler.getEnabled());
 				}
 			}
 			if (NoiseSuppressor.isAvailable()) {
-				Log.d(TAG, "NoiseSuppressor isAvailable");
+				CommonUtils.logd(TAG, "NoiseSuppressor isAvailable");
 				mNoiseSuppressor = NoiseSuppressor.create(mAudioRecord.getAudioSessionId());
 				if (mNoiseSuppressor != null && !mNoiseSuppressor.getEnabled()) {
 					mNoiseSuppressor.setEnabled(true);
-					Log.d(TAG, "NoiseSuppressor enabled = "+mNoiseSuppressor.getEnabled());
+					CommonUtils.logd(TAG, "NoiseSuppressor enabled = "+mNoiseSuppressor.getEnabled());
 				}
 			}
 		}

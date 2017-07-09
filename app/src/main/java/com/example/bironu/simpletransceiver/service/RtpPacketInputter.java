@@ -1,15 +1,13 @@
 package com.example.bironu.simpletransceiver.service;
 
+import com.example.bironu.simpletransceiver.CommonUtils;
+import com.example.bironu.simpletransceiver.main.PacketInputter;
+import com.example.bironu.simpletransceiver.rtp.RtpPacket;
+
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.InetAddress;
 import java.net.SocketException;
-
-import android.util.Log;
-
-import com.example.bironu.simpletransceiver.CommonSettings;
-import com.example.bironu.simpletransceiver.main.PacketInputter;
-import com.example.bironu.simpletransceiver.rtp.RtpPacket;
 
 public class RtpPacketInputter
 extends PacketInputter
@@ -59,10 +57,10 @@ extends PacketInputter
 	@Override
 	public int input() throws IOException {
 		int result = super.input();
-		if(CommonSettings.DEBUG_LEVEL >= Log.DEBUG) Log.d(TAG, "packet receive "+result+" byte");
+		CommonUtils.logd(TAG, "packet receive "+result+" byte");
 		// セッション確立していなければ捨てる
 		if(!mRtpSession.isSession()) {
-			if(CommonSettings.DEBUG_LEVEL >= Log.DEBUG) Log.d(TAG, "invalid session. session level = "+mRtpSession.getSessionLevel());
+			CommonUtils.logd(TAG, "invalid session. session level = "+mRtpSession.getSessionLevel());
 			initParam();
 			this.close();
 			return 0;
@@ -70,10 +68,10 @@ extends PacketInputter
 		
 		// タイムアウトしていたら
 		if(result < 0) {
-			if(CommonSettings.DEBUG_LEVEL >= Log.DEBUG) Log.d(TAG, "packet timeout.");
+			CommonUtils.logd(TAG, "packet timeout.");
 			this.setTimeout(mTimeoutLimit);
 			if(++mTimeoutCount > MAX_TIMEOUT_COUNT) {
-				if(CommonSettings.DEBUG_LEVEL >= Log.DEBUG) Log.d(TAG, "timeout count over. thread stop. ");
+				CommonUtils.logd(TAG, "timeout count over. thread stop. ");
 				initParam();
 				this.close();
 				mRtpSession.stopReceiveSession();
@@ -84,7 +82,7 @@ extends PacketInputter
 				result = mLastPacketLength;
 				System.arraycopy(mLastPacketBuffer, 0, this.getBuffer(), 0, result);
 				mTimeoutLimit += 20;
-				if(CommonSettings.DEBUG_LEVEL >= Log.DEBUG) Log.d(TAG, "timeout limit = "+mTimeoutLimit);
+				CommonUtils.logd(TAG, "timeout limit = "+mTimeoutLimit);
 			}
 		}
 		else if(result == 0) {
@@ -93,19 +91,19 @@ extends PacketInputter
 		else {
 			// RTPパケットじゃなければ捨てる
 			if(mRtpPacket.getVersion() != 2) {
-				if(CommonSettings.DEBUG_LEVEL >= Log.DEBUG) Log.d(TAG, "invalid rtp version.");
+				CommonUtils.logd(TAG, "invalid rtp version.");
 				return 0;
 			}
 			// 知らないSSRCだったら捨てる
 			final long ssrc = mRtpPacket.getSsrc();
 			if(ssrc != mRtpSession.getSsrc()){
-				if(CommonSettings.DEBUG_LEVEL >= Log.DEBUG) Log.d(TAG, "invalid ssrc.");
+				CommonUtils.logd(TAG, "invalid ssrc.");
 				return 0;
 			}
 			// 知らないペイロードタイプだったら捨てる
 			final int payloadType = mRtpPacket.getPayloadType();
 			if(payloadType != mRtpSession.getPayloadType()) {
-				if(CommonSettings.DEBUG_LEVEL >= Log.DEBUG) Log.d(TAG, "invalid payload.");
+				CommonUtils.logd(TAG, "invalid payload.");
 				return 0;
 			}
 			
@@ -142,7 +140,7 @@ extends PacketInputter
 			
 			final long now = System.currentTimeMillis();
 			final long sub = now - mLastReceiveTime;
-			if(CommonSettings.DEBUG_LEVEL >= Log.DEBUG) Log.d(TAG, "now - mLastReceiveTime = "+sub);
+			CommonUtils.logd(TAG, "now - mLastReceiveTime = "+sub);
 			if(mLastReceiveTime > 0) {
 				mTimeoutLimit -= (sub - 20);
 				if(mTimeoutLimit <= 0) {
@@ -152,7 +150,7 @@ extends PacketInputter
 			else {
 				mTimeoutLimit = 100;
 			}
-			if(CommonSettings.DEBUG_LEVEL >= Log.DEBUG) Log.d(TAG, "timeout limit = "+mTimeoutLimit);
+			CommonUtils.logd(TAG, "timeout limit = "+mTimeoutLimit);
 			this.setTimeout(mTimeoutLimit);
 			mLastReceiveTime = now;
 			

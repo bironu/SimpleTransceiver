@@ -2,8 +2,6 @@ package com.example.bironu.simpletransceiver;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import android.util.Log;
-
 public class JobWorker
 implements Worker
 {
@@ -22,13 +20,13 @@ implements Worker
 	public void run() {
 		//android.os.Process.setThreadPriority(android.os.Process.THREAD_PRIORITY_AUDIO);
 		try{
-			if(CommonSettings.DEBUG_LEVEL >= Log.VERBOSE) Log.d(TAG, "work start");
+			CommonUtils.logd(TAG, "work start");
 			while (!Thread.interrupted() && mIsWorking.get()) {
 				if(!mJob.action()) {
 					break;
 				}
 			}
-			if(CommonSettings.DEBUG_LEVEL >= Log.VERBOSE) Log.d(TAG, "work stop");
+			CommonUtils.logd(TAG, "work stop");
 		}
 		catch(Exception e) {
 			e.printStackTrace();

@@ -19,8 +19,7 @@ import com.example.bironu.simpletransceiver.service.RtpService;
 /**
  *
  */
-public class MainActivity extends Activity
-{
+public class MainActivity extends Activity {
 	public static final String TAG = MainActivity.class.getSimpleName();
 
     private MainController mMainController;
@@ -40,7 +39,7 @@ public class MainActivity extends Activity
         binding.setMainViewModel(mainViewModel);
 
 		AudioManager am = (AudioManager) this.getSystemService(Context.AUDIO_SERVICE);
-        mainViewModel.setCheckSpeaker(am.isSpeakerphoneOn());
+        mainViewModel.setSpeakerMode(am.isSpeakerphoneOn());
 
         binding.checkSpeaker.setOnCheckedChangeListener(mMainController);
         binding.toggleSend.setOnCheckedChangeListener(mMainController);

@@ -1,20 +1,20 @@
 package com.example.bironu.simpletransceiver.main;
 
-import java.io.IOException;
-import java.net.SocketException;
-
 import android.media.AudioFormat;
 import android.media.AudioRecord;
 import android.media.MediaRecorder.AudioSource;
 import android.media.audiofx.AcousticEchoCanceler;
 import android.media.audiofx.NoiseSuppressor;
-import android.util.Log;
 
 import com.example.bironu.simpletransceiver.CommonSettings;
+import com.example.bironu.simpletransceiver.CommonUtils;
 import com.example.bironu.simpletransceiver.DataInputter;
 import com.example.bironu.simpletransceiver.codecs.Codec;
 
-public class MicInputter
+import java.io.IOException;
+import java.net.SocketException;
+
+class MicInputter
 implements DataInputter
 {
 	public static final String TAG = MicInputter.class.getSimpleName();
@@ -33,13 +33,13 @@ implements DataInputter
 		mAudioRecord.startRecording();
 	}
 
-	short a1, a2, a3, a4, a5, a6, a7;
+	private short a1, a2, a3, a4, a5, a6, a7;
 	@Override
 	public int input() throws IOException {
 		final int length = mAudioRecord.read(mBuffer, 0, mBuffer.length);
-		if(CommonSettings.DEBUG_LEVEL >= Log.DEBUG) Log.d(TAG, "mic read " + length + " byte");
+		CommonUtils.logd(TAG, "mic read " + length + " byte");
 		for(int i = 0; i < length; i+=2) {
-			final short tmp = (short)((int)(mBuffer[i] & 0xff) + (((int)(mBuffer[i+1] & 0xff) << 8)));
+			final short tmp = (short)((mBuffer[i] & 0xff) + (((mBuffer[i+1] & 0xff) << 8)));
 			short avg = (short) ((a1 + a2 + a3 + a4 + a5 + a6 + a7 + Math.abs(tmp)) / 8);
 			a1 = a2;
 			a2 = a3;

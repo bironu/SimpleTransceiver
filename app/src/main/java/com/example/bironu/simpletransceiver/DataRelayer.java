@@ -4,8 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import android.util.Log;
-
 public class DataRelayer
 implements Worker
 {
@@ -43,7 +41,7 @@ implements Worker
 			mBeforeAction.run();
 		}
 		try{
-			if(CommonSettings.DEBUG_LEVEL >= Log.VERBOSE) Log.d(TAG, "work start");
+			CommonUtils.logd(TAG, "work start");
 			while (!Thread.interrupted() && mIsWorking.get()) {
 				final int length = mIn.input();
 				if(length > 0) {
@@ -55,7 +53,7 @@ implements Worker
 					}
 				}
 			}
-			if(CommonSettings.DEBUG_LEVEL >= Log.VERBOSE) Log.d(TAG, "work stop");
+			CommonUtils.logd(TAG, "work stop");
 		}
 		catch(Exception e) {
 			e.printStackTrace();

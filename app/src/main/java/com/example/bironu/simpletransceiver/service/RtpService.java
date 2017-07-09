@@ -7,7 +7,6 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Binder;
 import android.os.IBinder;
-import android.util.Log;
 
 import com.example.bironu.simpletransceiver.CommonSettings;
 import com.example.bironu.simpletransceiver.CommonUtils;
@@ -53,12 +52,10 @@ public class RtpService extends Service
 		public void onReceive(Context context, Intent intent) {
 			final String action = intent.getAction();
 			if(CommonSettings.ACTION_NET_CONN_CONNECTIVITY_CHANGE.equals(action)) {
-				if(CommonSettings.DEBUG_LEVEL >= Log.DEBUG) Log.d(TAG, "receive android.net.conn.CONNECTIVITY_CHANGE !!!");
+				CommonUtils.logd(TAG, "receive android.net.conn.CONNECTIVITY_CHANGE !!!");
 				if(context instanceof RtpService) {
 					((RtpService) context).setLocalIpAddress();
 				}
-			}
-			else {
 			}
 		}
 	}
@@ -178,9 +175,9 @@ public class RtpService extends Service
 	synchronized boolean beginRtpReceiver(CtrlPacketStart start, InetAddress remoteAddress) {
 		boolean result = false;
 		try {
-			if(CommonSettings.DEBUG_LEVEL >= Log.DEBUG) Log.d(TAG, "beginRtpReceiver session level = "+mRtpSession.getLevel()+", pakcet session level = "+start.getSessionLevel());
+			CommonUtils.logd(TAG, "beginRtpReceiver session level = "+mRtpSession.getLevel()+", pakcet session level = "+start.getSessionLevel());
 			if(mRtpSession.beginSession(start.getSessionLevel())) {
-				if(CommonSettings.DEBUG_LEVEL >= Log.DEBUG) Log.d(TAG, "beginRtpReceiver OK!!!!!!!");
+				CommonUtils.logd(TAG, "beginRtpReceiver OK!!!!!!!");
 				// 送信or受信を判定して強制終了　セッション無しなら何もせず
 				endRtpReceiver();
 				endRtpSender();
@@ -215,7 +212,7 @@ public class RtpService extends Service
 	}
 	
 	synchronized void endRtpReceiver(CtrlPacketStop stop) {
-		if(CommonSettings.DEBUG_LEVEL >= Log.DEBUG) Log.d(TAG, "endRtpReceiver session ssrc = "+mRtpSession.getSsrc()+", packet ssrc = "+stop.getSsrc());
+		CommonUtils.logd(TAG, "endRtpReceiver session ssrc = "+mRtpSession.getSsrc()+", packet ssrc = "+stop.getSsrc());
 		if(mRtpSession.getSsrc() == stop.getSsrc()) {
 			endRtpReceiver();
 			sendCtrlPacket(stop);
@@ -237,9 +234,9 @@ public class RtpService extends Service
 		try{
 			Preferences prefs = new Preferences(this.getApplicationContext());
 			final int accountLevel = prefs.getAccountLevel();
-			if(CommonSettings.DEBUG_LEVEL >= Log.DEBUG) Log.d(TAG, "beginRtpSender session level = "+mRtpSession.getLevel()+", account level = "+accountLevel);
+			CommonUtils.logd(TAG, "beginRtpSender session level = "+mRtpSession.getLevel()+", account level = "+accountLevel);
 			if(mRtpSession.beginSession(accountLevel)) {
-				if(CommonSettings.DEBUG_LEVEL >= Log.DEBUG) Log.d(TAG, "beginRtpSender OK!!!!!!!");
+				CommonUtils.logd(TAG, "beginRtpSender OK!!!!!!!");
 				// 送信or受信を判定して強制終了　セッション無しなら何もせず
 				endRtpReceiver();
 				endRtpSender();
@@ -255,7 +252,7 @@ public class RtpService extends Service
 				}
 				
 				CtrlPacketStart packet = new CtrlPacketStart(mRtpSession);
-				if(CommonSettings.DEBUG_LEVEL >= Log.DEBUG) Log.d(TAG, "sendCtrlPacketStart");
+				CommonUtils.logd(TAG, "sendCtrlPacketStart");
 				sendCtrlPacket(packet);
 
 				mMic2Packet = new DataRelayer(micIn);
@@ -265,7 +262,7 @@ public class RtpService extends Service
 				result = true;
 			}
 			else {
-				if(CommonSettings.DEBUG_LEVEL >= Log.DEBUG) Log.d(TAG, "beginRtpSender NG!!!!!!!");
+				CommonUtils.logd(TAG, "beginRtpSender NG!!!!!!!");
 			}
 		}
 		catch(SocketException e) {
@@ -278,13 +275,13 @@ public class RtpService extends Service
 	}
 	
 	synchronized void endRtpSender() {
-		if(CommonSettings.DEBUG_LEVEL >= Log.DEBUG) Log.d(TAG, "endRtpSender call");
+		CommonUtils.logd(TAG, "endRtpSender call");
 		if(mMic2Packet != null) {
 			mMic2Packet.halt();
 			mWorkerList.remove(mMic2Packet);
 			mMic2Packet = null;
 			CtrlPacketStop packet = new CtrlPacketStop(mRtpSession);
-			if(CommonSettings.DEBUG_LEVEL >= Log.DEBUG) Log.d(TAG, "sendCtrlPacketStop");
+			CommonUtils.logd(TAG, "sendCtrlPacketStop");
 			sendCtrlPacket(packet);
 			mRtpSession.stopSendSession();
 		}
@@ -306,17 +303,17 @@ public class RtpService extends Service
 	}
 	
 	synchronized void endCtrlReceiver() {
-		if(CommonSettings.DEBUG_LEVEL >= Log.DEBUG) Log.d(TAG, "endCtrlReceiver() call.");
+		CommonUtils.logd(TAG, "endCtrlReceiver() call.");
 		if(mCtrlPacketReceiver != null) {
 			mCtrlPacketReceiver.halt();
-			if(CommonSettings.DEBUG_LEVEL >= Log.DEBUG) Log.d(TAG, "mCtrlPacketReceiver.halt() call");
+			CommonUtils.logd(TAG, "mCtrlPacketReceiver.halt() call");
 			mWorkerList.remove(mCtrlPacketReceiver);
 			mCtrlPacketReceiver = null;
 		}
 	}
 	
 	public synchronized void sendCtrlPacket(CtrlPacket packet) {
-		if(CommonSettings.DEBUG_LEVEL >= Log.DEBUG) Log.d(TAG, "sendCtrlPacket call");
+		CommonUtils.logd(TAG, "sendCtrlPacket call");
 		try {
 			CtrlPacketSendJob job = new CtrlPacketSendJob(mLocalInetAddress, packet);
 			job.addSendTarget(mRtpSession.getCtrlSendTargetList());
@@ -331,7 +328,7 @@ public class RtpService extends Service
 	
 	synchronized void setLocalIpAddress() {
 		InetAddress localInetAddress = CommonUtils.getIPAddress();
-		if(CommonSettings.DEBUG_LEVEL >= Log.DEBUG) Log.d(TAG, "setLocalIpAddress old address = "+mLocalInetAddress+", new address"+localInetAddress);
+		CommonUtils.logd(TAG, "setLocalIpAddress old address = "+mLocalInetAddress+", new address"+localInetAddress);
 		if(localInetAddress != null) {
 			if(!localInetAddress.equals(mLocalInetAddress)) {
 				mLocalInetAddress = localInetAddress;
@@ -347,5 +344,4 @@ public class RtpService extends Service
 			endCtrlReceiver();
 		}
 	}
-
 }

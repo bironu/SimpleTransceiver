@@ -18,8 +18,8 @@ public class MainViewModel extends BaseObservable {
     private String mForwardIpAddress;
     private List<String> mForwardIpAddressList = new ArrayList<>();
     private boolean mReceiveRtp;
-    private boolean mSend;
-    private boolean mCheckSpeaker;
+    private boolean mSendMode;
+    private boolean mSpeakerMode;
 
     @Bindable
     public boolean isReceiveRtp() {
@@ -77,23 +77,23 @@ public class MainViewModel extends BaseObservable {
     }
 
     @Bindable
-    public boolean isSend() {
-        return mSend;
+    public boolean isSendMode() {
+        return mSendMode;
     }
 
-    public void setIsSend(boolean send) {
-        mSend = send;
-        this.notifyPropertyChanged(BR.send);
+    public void setSendMode(boolean sendMode) {
+        mSendMode = sendMode;
+        this.notifyPropertyChanged(BR.sendMode);
     }
 
     @Bindable
-    public boolean isCheckSpeaker() {
-        return mCheckSpeaker;
+    public boolean isSpeakerMode() {
+        return mSpeakerMode;
     }
 
-    public void setCheckSpeaker(boolean checkSpeaker) {
-        this.mCheckSpeaker = checkSpeaker;
-        this.notifyPropertyChanged(BR.checkSpeaker);
+    public void setSpeakerMode(boolean checkSpeaker) {
+        this.mSpeakerMode = checkSpeaker;
+        this.notifyPropertyChanged(BR.speakerMode);
     }
 
 }

@@ -1,5 +1,16 @@
 package com.example.bironu.simpletransceiver.service;
 
+import android.media.AudioFormat;
+import android.media.AudioManager;
+import android.media.AudioTrack;
+import android.media.ToneGenerator;
+
+import com.example.bironu.simpletransceiver.CommonSettings;
+import com.example.bironu.simpletransceiver.CommonUtils;
+import com.example.bironu.simpletransceiver.DataOutputter;
+import com.example.bironu.simpletransceiver.codecs.Codec;
+import com.example.bironu.simpletransceiver.rtp.RtpPacket;
+
 import java.io.IOException;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
@@ -12,18 +23,6 @@ import javax.crypto.NoSuchPaddingException;
 import javax.crypto.ShortBufferException;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
-
-import android.media.AudioFormat;
-import android.media.AudioManager;
-import android.media.AudioTrack;
-import android.media.ToneGenerator;
-import android.util.Log;
-
-import com.example.bironu.simpletransceiver.CommonSettings;
-import com.example.bironu.simpletransceiver.CommonUtils;
-import com.example.bironu.simpletransceiver.DataOutputter;
-import com.example.bironu.simpletransceiver.codecs.Codec;
-import com.example.bironu.simpletransceiver.rtp.RtpPacket;
 
 public class DecodingSpeakerOutputter
 implements DataOutputter
@@ -58,8 +57,8 @@ implements DataOutputter
 		mAudioTrack.write(mDecodeBuffer, 0, mDecodeBuffer.length);
 		mAudioTrack.write(mDecodeBuffer, 0, mDecodeBuffer.length);
 		mAudioTrack.play();
-		
-		if(CommonSettings.DEBUG_LEVEL >= Log.DEBUG) Log.d(TAG, "MIN_BUF_SIZE = "+MIN_BUF_SIZE);
+
+		CommonUtils.logd(TAG, "MIN_BUF_SIZE = "+MIN_BUF_SIZE);
 	}
 
 	StringBuilder sb = new StringBuilder(6 * 160);
@@ -72,15 +71,15 @@ implements DataOutputter
 			// bufはRTPパケットそのまんま
 			mCipher.doFinal(buf, RtpPacket.HEADER_LENGTH, length - RtpPacket.HEADER_LENGTH, buf, RtpPacket.HEADER_LENGTH);
 			final int len = mCodec.decode(buf, mDecodeBuffer, mCodec.frame_size());
-			if(CommonSettings.DEBUG_LEVEL >= Log.INFO) {
-				sb.setLength(0);
-				for(int i = 0; i < len; ++i) {
-					sb.append(mDecodeBuffer[i]).append(',');
-				}
-			}
+//			if(CommonSettings.DEBUG_LEVEL >= Log.INFO) {
+//				sb.setLength(0);
+//				for(int i = 0; i < len; ++i) {
+//					sb.append(mDecodeBuffer[i]).append(',');
+//				}
+//			}
 			final int writeLength = mAudioTrack.write(mDecodeBuffer, 0, len);
-			if(CommonSettings.DEBUG_LEVEL >= Log.DEBUG) Log.d(TAG, "speaker write "+(writeLength*2)+" byte");
-			if(CommonSettings.DEBUG_LEVEL >= Log.INFO) Log.d(TAG, sb.toString());
+			CommonUtils.logd(TAG, "speaker write "+(writeLength*2)+" byte");
+//			if(CommonSettings.DEBUG_LEVEL >= Log.INFO) Log.d(TAG, sb.toString());
 		}
 		catch (ShortBufferException e) {
 			e.printStackTrace();
