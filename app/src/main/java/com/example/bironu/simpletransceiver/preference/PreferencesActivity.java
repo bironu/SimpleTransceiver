@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.example.bironu.simpletransceiver;
+package com.example.bironu.simpletransceiver.preference;
 
 import android.app.Activity;
 import android.app.Fragment;
@@ -29,6 +29,8 @@ import android.preference.Preference;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
 import android.preference.PreferenceScreen;
+
+import com.example.bironu.simpletransceiver.R;
 
 /**
  * Handles SIP authentication settings for the Walkie Talkie app.

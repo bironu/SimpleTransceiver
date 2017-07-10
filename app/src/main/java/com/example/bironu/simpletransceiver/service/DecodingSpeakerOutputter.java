@@ -5,10 +5,10 @@ import android.media.AudioManager;
 import android.media.AudioTrack;
 import android.media.ToneGenerator;
 
-import com.example.bironu.simpletransceiver.CommonSettings;
-import com.example.bironu.simpletransceiver.CommonUtils;
-import com.example.bironu.simpletransceiver.DataOutputter;
 import com.example.bironu.simpletransceiver.codecs.Codec;
+import com.example.bironu.simpletransceiver.common.CommonSettings;
+import com.example.bironu.simpletransceiver.common.CommonUtils;
+import com.example.bironu.simpletransceiver.common.DataOutputter;
 import com.example.bironu.simpletransceiver.rtp.RtpPacket;
 
 import java.io.IOException;

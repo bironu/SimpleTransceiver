@@ -1,7 +1,6 @@
 package com.example.bironu.simpletransceiver.service;
 
-import com.example.bironu.simpletransceiver.CommonUtils;
-import com.example.bironu.simpletransceiver.main.PacketInputter;
+import com.example.bironu.simpletransceiver.common.CommonUtils;
 import com.example.bironu.simpletransceiver.rtp.RtpPacket;
 
 import java.io.IOException;

@@ -1,7 +1,6 @@
 package com.example.bironu.simpletransceiver.service;
 
-import com.example.bironu.simpletransceiver.Job;
-import com.example.bironu.simpletransceiver.main.PacketOutputter;
+import com.example.bironu.simpletransceiver.common.Job;
 
 import java.io.IOException;
 import java.net.InetAddress;

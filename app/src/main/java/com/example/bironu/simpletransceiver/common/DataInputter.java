@@ -1,4 +1,4 @@
-package com.example.bironu.simpletransceiver;
+package com.example.bironu.simpletransceiver.common;
 
 import java.io.IOException;
 

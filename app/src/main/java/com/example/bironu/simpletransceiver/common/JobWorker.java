@@ -1,11 +1,11 @@
-package com.example.bironu.simpletransceiver;
+package com.example.bironu.simpletransceiver.common;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
 public class JobWorker
 implements Worker
 {
-	public static final String TAG = DataRelayer.class.getSimpleName();
+	public static final String TAG = JobWorker.class.getSimpleName();
 
 	private final AtomicBoolean mIsWorking;
 	private final Job mJob;

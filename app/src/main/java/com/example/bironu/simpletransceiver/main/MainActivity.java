@@ -10,10 +10,10 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 
-import com.example.bironu.simpletransceiver.CommonSettings;
-import com.example.bironu.simpletransceiver.PreferencesActivity;
 import com.example.bironu.simpletransceiver.R;
+import com.example.bironu.simpletransceiver.common.CommonSettings;
 import com.example.bironu.simpletransceiver.databinding.MainActivityBinding;
+import com.example.bironu.simpletransceiver.preference.PreferencesActivity;
 import com.example.bironu.simpletransceiver.service.RtpService;
 
 /**

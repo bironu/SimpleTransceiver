@@ -1,4 +1,4 @@
-package com.example.bironu.simpletransceiver;
+package com.example.bironu.simpletransceiver.common;
 
 import java.util.ArrayList;
 import java.util.List;

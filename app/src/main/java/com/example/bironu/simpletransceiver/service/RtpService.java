@@ -8,18 +8,17 @@ import android.content.IntentFilter;
 import android.os.Binder;
 import android.os.IBinder;
 
-import com.example.bironu.simpletransceiver.CommonSettings;
-import com.example.bironu.simpletransceiver.CommonUtils;
-import com.example.bironu.simpletransceiver.DataInputter;
-import com.example.bironu.simpletransceiver.DataOutputter;
-import com.example.bironu.simpletransceiver.DataRelayer;
-import com.example.bironu.simpletransceiver.Job;
-import com.example.bironu.simpletransceiver.JobWorker;
-import com.example.bironu.simpletransceiver.Preferences;
-import com.example.bironu.simpletransceiver.Worker;
 import com.example.bironu.simpletransceiver.codecs.Codec;
 import com.example.bironu.simpletransceiver.codecs.ulaw;
-import com.example.bironu.simpletransceiver.main.PacketOutputter;
+import com.example.bironu.simpletransceiver.common.CommonSettings;
+import com.example.bironu.simpletransceiver.common.CommonUtils;
+import com.example.bironu.simpletransceiver.common.DataInputter;
+import com.example.bironu.simpletransceiver.common.DataOutputter;
+import com.example.bironu.simpletransceiver.common.DataRelayer;
+import com.example.bironu.simpletransceiver.common.Job;
+import com.example.bironu.simpletransceiver.common.JobWorker;
+import com.example.bironu.simpletransceiver.common.Worker;
+import com.example.bironu.simpletransceiver.preference.Preferences;
 
 import java.net.InetAddress;
 import java.net.SocketException;

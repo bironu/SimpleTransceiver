@@ -4,7 +4,7 @@ import android.databinding.BaseObservable;
 import android.databinding.Bindable;
 
 import com.example.bironu.simpletransceiver.BR;
-import com.example.bironu.simpletransceiver.CommonUtils;
+import com.example.bironu.simpletransceiver.common.CommonUtils;
 
 import java.net.InetAddress;
 import java.util.ArrayList;

@@ -1,7 +1,6 @@
 package com.example.bironu.simpletransceiver.service;
 
 import com.example.bironu.simpletransceiver.codecs.Codec;
-import com.example.bironu.simpletransceiver.main.PacketOutputter;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
@@ -59,11 +58,7 @@ public class RtpSession
 
 	public synchronized boolean beginSession(int level) {
 		// レベルで強制割り込み処理
-		boolean result = false;
-		if(mSessionLevel < level) {
-			result = true;
-		}
-		return result;
+		return mSessionLevel < level;
 	}
 
 	public synchronized boolean isSession() {

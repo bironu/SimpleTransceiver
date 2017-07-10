@@ -1,13 +1,13 @@
-package com.example.bironu.simpletransceiver.main;
+package com.example.bironu.simpletransceiver.service;
 
 import android.media.AudioFormat;
 import android.media.AudioManager;
 import android.media.AudioTrack;
 
-import com.example.bironu.simpletransceiver.CommonSettings;
-import com.example.bironu.simpletransceiver.CommonUtils;
-import com.example.bironu.simpletransceiver.DataOutputter;
 import com.example.bironu.simpletransceiver.codecs.Codec;
+import com.example.bironu.simpletransceiver.common.CommonSettings;
+import com.example.bironu.simpletransceiver.common.CommonUtils;
+import com.example.bironu.simpletransceiver.common.DataOutputter;
 
 import java.io.IOException;
 

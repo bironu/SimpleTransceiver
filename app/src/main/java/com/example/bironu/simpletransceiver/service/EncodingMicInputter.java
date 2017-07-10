@@ -8,10 +8,10 @@ import android.media.audiofx.AcousticEchoCanceler;
 import android.media.audiofx.NoiseSuppressor;
 import android.os.Build;
 
-import com.example.bironu.simpletransceiver.CommonSettings;
-import com.example.bironu.simpletransceiver.CommonUtils;
-import com.example.bironu.simpletransceiver.DataInputter;
 import com.example.bironu.simpletransceiver.codecs.Codec;
+import com.example.bironu.simpletransceiver.common.CommonSettings;
+import com.example.bironu.simpletransceiver.common.CommonUtils;
+import com.example.bironu.simpletransceiver.common.DataInputter;
 import com.example.bironu.simpletransceiver.rtp.RtpPacket;
 
 import java.io.IOException;
@@ -62,31 +62,13 @@ implements DataInputter
 		initEncryptCipher();
 	}
 
-	private int mPrevRawData;
-//	StringBuilder sb = new StringBuilder(6 * 160);
-
 	@Override
 	public int input() throws IOException {
 		final int length = mAudioRecord.read(mReadBuffer, 0, mReadBuffer.length);
 		CommonUtils.logd(TAG, "mic read " + length*2 + " byte");
 		if(mThreshold > 0) {
-//			if(CommonSettings.DEBUG_LEVEL >= Log.INFO) sb.setLength(0);
 			for(int i = 0; i < length; ++i) {
-//				final int aaa = mReadBuffer[i] / mThreshold * mThreshold * 5 / 2;
-//				int avg = (mPrevRawData * 12 + aaa * 4) / 16;
-//				if(avg > 32767) {
-//					avg = 32767;
-//				}
-//				else if(avg < -32768) {
-//					avg = -32768;
-//				}
-//				mPrevRawData = avg;
-//				mReadBuffer[i] = (short) avg;
-				final int aaa = mReadBuffer[i];
-				if(-mThreshold < aaa && aaa < mThreshold) {
-					mReadBuffer[i] = (short) (aaa / 2);
-				}
-//				if(CommonSettings.DEBUG_LEVEL >= Log.INFO) sb.append(mReadBuffer[i]).append(',');
+				// この辺に独自のフィルタとか組み込めるかも
 			}
 		}
 		else {

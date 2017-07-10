@@ -1,9 +1,11 @@
-package com.example.bironu.simpletransceiver;
+package com.example.bironu.simpletransceiver.preference;
 
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.preference.PreferenceManager;
+
+import com.example.bironu.simpletransceiver.R;
 
 /**
  * Sipのアカウント設定

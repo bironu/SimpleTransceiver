@@ -1,4 +1,4 @@
-package com.example.bironu.simpletransceiver;
+package com.example.bironu.simpletransceiver.common;
 
 import android.util.Log;
 

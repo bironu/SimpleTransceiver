@@ -1,7 +1,7 @@
-package com.example.bironu.simpletransceiver.main;
+package com.example.bironu.simpletransceiver.service;
 
-import com.example.bironu.simpletransceiver.CommonUtils;
-import com.example.bironu.simpletransceiver.DataOutputter;
+import com.example.bironu.simpletransceiver.common.CommonUtils;
+import com.example.bironu.simpletransceiver.common.DataOutputter;
 
 import java.io.IOException;
 import java.net.DatagramPacket;

@@ -7,9 +7,9 @@ import android.content.Intent;
 import android.media.AudioManager;
 import android.text.TextUtils;
 
-import com.example.bironu.simpletransceiver.CommonSettings;
-import com.example.bironu.simpletransceiver.CommonUtils;
-import com.example.bironu.simpletransceiver.Preferences;
+import com.example.bironu.simpletransceiver.common.CommonSettings;
+import com.example.bironu.simpletransceiver.common.CommonUtils;
+import com.example.bironu.simpletransceiver.preference.Preferences;
 import com.example.bironu.simpletransceiver.service.RtpService;
 
 /**

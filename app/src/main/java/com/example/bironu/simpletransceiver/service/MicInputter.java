@@ -1,4 +1,4 @@
-package com.example.bironu.simpletransceiver.main;
+package com.example.bironu.simpletransceiver.service;
 
 import android.media.AudioFormat;
 import android.media.AudioRecord;
@@ -6,10 +6,10 @@ import android.media.MediaRecorder.AudioSource;
 import android.media.audiofx.AcousticEchoCanceler;
 import android.media.audiofx.NoiseSuppressor;
 
-import com.example.bironu.simpletransceiver.CommonSettings;
-import com.example.bironu.simpletransceiver.CommonUtils;
-import com.example.bironu.simpletransceiver.DataInputter;
 import com.example.bironu.simpletransceiver.codecs.Codec;
+import com.example.bironu.simpletransceiver.common.CommonSettings;
+import com.example.bironu.simpletransceiver.common.CommonUtils;
+import com.example.bironu.simpletransceiver.common.DataInputter;
 
 import java.io.IOException;
 import java.net.SocketException;
@@ -38,25 +38,25 @@ implements DataInputter
 	public int input() throws IOException {
 		final int length = mAudioRecord.read(mBuffer, 0, mBuffer.length);
 		CommonUtils.logd(TAG, "mic read " + length + " byte");
-		for(int i = 0; i < length; i+=2) {
-			final short tmp = (short)((mBuffer[i] & 0xff) + (((mBuffer[i+1] & 0xff) << 8)));
-			short avg = (short) ((a1 + a2 + a3 + a4 + a5 + a6 + a7 + Math.abs(tmp)) / 8);
-			a1 = a2;
-			a2 = a3;
-			a3 = a4;
-			a4 = a5;
-			a5 = a6;
-			a6 = a7;
-			a7 = avg;
-			if(avg < 512) {
-				avg = 0;
-			}
-			if(tmp < 0) {
-				avg = (short) -avg;
-			}
-			mBuffer[i] = (byte)(avg & 0xff);
-			mBuffer[i+1] = (byte)((avg & 0xff00) >> 8);
-		}
+//		for(int i = 0; i < length; i+=2) {
+//			final short tmp = (short)((mBuffer[i] & 0xff) + (((mBuffer[i+1] & 0xff) << 8)));
+//			short avg = (short) ((a1 + a2 + a3 + a4 + a5 + a6 + a7 + Math.abs(tmp)) / 8);
+//			a1 = a2;
+//			a2 = a3;
+//			a3 = a4;
+//			a4 = a5;
+//			a5 = a6;
+//			a6 = a7;
+//			a7 = avg;
+//			if(avg < 512) {
+//				avg = 0;
+//			}
+//			if(tmp < 0) {
+//				avg = (short) -avg;
+//			}
+//			mBuffer[i] = (byte)(avg & 0xff);
+//			mBuffer[i+1] = (byte)((avg & 0xff00) >> 8);
+//		}
 		return length;
 	}
 	
