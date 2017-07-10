@@ -1,15 +1,18 @@
 package com.example.bironu.simpletransceiver.service;
 
+import android.annotation.TargetApi;
 import android.media.AudioFormat;
 import android.media.AudioRecord;
 import android.media.MediaRecorder.AudioSource;
 import android.media.audiofx.AcousticEchoCanceler;
 import android.media.audiofx.NoiseSuppressor;
+import android.os.Build;
 
 import com.example.bironu.simpletransceiver.codecs.Codec;
 import com.example.bironu.simpletransceiver.common.CommonSettings;
 import com.example.bironu.simpletransceiver.common.CommonUtils;
 import com.example.bironu.simpletransceiver.common.DataInputter;
+import com.example.bironu.simpletransceiver.rtp.RtpPacket;
 
 import java.io.IOException;
 import java.net.SocketException;
@@ -20,44 +23,35 @@ implements DataInputter
 	public static final String TAG = MicInputter.class.getSimpleName();
 	
 	private static final int CHANNEL_CONFIG = AudioFormat.CHANNEL_IN_MONO;
-	private final int MIN_BUF_SIZE;
 
+    private final Codec mCodec;
 	private final byte[] mBuffer;
+    private final short[] mReadBuffer;
 	private final AudioRecord mAudioRecord;
-	
+    private AcousticEchoCanceler mAcousticEchoCanceler;
+    private NoiseSuppressor mNoiseSuppressor;
+
 	public MicInputter(Codec codec) throws SocketException {
-		MIN_BUF_SIZE = AudioRecord.getMinBufferSize(codec.samp_rate(), CHANNEL_CONFIG, CommonSettings.AUDIO_FORMAT);
-		mBuffer = new byte[codec.frame_size()*2];
-		mAudioRecord = new AudioRecord(AudioSource.DEFAULT, codec.samp_rate(), CHANNEL_CONFIG, CommonSettings.AUDIO_FORMAT, MIN_BUF_SIZE);
-		aec(mAudioRecord);
+		final int minBufSize = AudioRecord.getMinBufferSize(codec.samp_rate(), CHANNEL_CONFIG, CommonSettings.AUDIO_FORMAT);
+        mCodec = codec;
+		mBuffer = new byte[codec.frame_size() * 2 + RtpPacket.HEADER_LENGTH];
+        mReadBuffer = new short[codec.frame_size()];
+		mAudioRecord = new AudioRecord(AudioSource.DEFAULT, codec.samp_rate(), CHANNEL_CONFIG, CommonSettings.AUDIO_FORMAT, minBufSize);
+		aec();
 		mAudioRecord.startRecording();
 	}
 
-	private short a1, a2, a3, a4, a5, a6, a7;
 	@Override
 	public int input() throws IOException {
-		final int length = mAudioRecord.read(mBuffer, 0, mBuffer.length);
-		CommonUtils.logd(TAG, "mic read " + length + " byte");
+        final int length = mAudioRecord.read(mReadBuffer, 0, mReadBuffer.length);
+        CommonUtils.logd(TAG, "mic read " + length*2 + " byte");
 //		for(int i = 0; i < length; i+=2) {
-//			final short tmp = (short)((mBuffer[i] & 0xff) + (((mBuffer[i+1] & 0xff) << 8)));
-//			short avg = (short) ((a1 + a2 + a3 + a4 + a5 + a6 + a7 + Math.abs(tmp)) / 8);
-//			a1 = a2;
-//			a2 = a3;
-//			a3 = a4;
-//			a4 = a5;
-//			a5 = a6;
-//			a6 = a7;
-//			a7 = avg;
-//			if(avg < 512) {
-//				avg = 0;
-//			}
-//			if(tmp < 0) {
-//				avg = (short) -avg;
-//			}
-//			mBuffer[i] = (byte)(avg & 0xff);
-//			mBuffer[i+1] = (byte)((avg & 0xff00) >> 8);
+//			// この辺で独自のフィルタとかかけられるかも
 //		}
-		return length;
+        final int encResult = mCodec.encode(mReadBuffer, 0, mBuffer, length);
+        int result = encResult + RtpPacket.HEADER_LENGTH;
+        CommonUtils.logd(TAG, "encode result " + length*2 + " byte -> "+encResult+" byte");
+		return result;
 	}
 	
 	@Override
@@ -69,21 +63,37 @@ implements DataInputter
 	public void close() {
 		//mAudioRecord.stop();
 		mAudioRecord.release();
+        if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+            if(mAcousticEchoCanceler != null) {
+                mAcousticEchoCanceler.release();
+                mAcousticEchoCanceler = null;
+            }
+            if(mNoiseSuppressor != null) {
+                mNoiseSuppressor.release();
+                mNoiseSuppressor = null;
+            }
+        }
 	}
-	
-	private static void aec(AudioRecord ar) {
-		if (AcousticEchoCanceler.isAvailable()) {
-	        AcousticEchoCanceler aec = AcousticEchoCanceler.create(ar.getAudioSessionId());
-	        if (aec != null && !aec.getEnabled()) {
-	        	aec.setEnabled(true);
-	        }
-		}
-		if (NoiseSuppressor.isAvailable()) {
-	        NoiseSuppressor noise = NoiseSuppressor.create(ar.getAudioSessionId());
-	        if (noise != null && !noise.getEnabled()) {
-	        	noise.setEnabled(true);
-	        }
-		}
-	}
-	
+
+    @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
+    private void aec() {
+        if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+            if (AcousticEchoCanceler.isAvailable()) {
+                CommonUtils.logd(TAG, "AcousticEchoCanceler isAvailable");
+                mAcousticEchoCanceler = AcousticEchoCanceler.create(mAudioRecord.getAudioSessionId());
+                if (mAcousticEchoCanceler != null && !mAcousticEchoCanceler.getEnabled()) {
+                    mAcousticEchoCanceler.setEnabled(true);
+                    CommonUtils.logd(TAG, "AcousticEchoCanceler enabled = "+mAcousticEchoCanceler.getEnabled());
+                }
+            }
+            if (NoiseSuppressor.isAvailable()) {
+                CommonUtils.logd(TAG, "NoiseSuppressor isAvailable");
+                mNoiseSuppressor = NoiseSuppressor.create(mAudioRecord.getAudioSessionId());
+                if (mNoiseSuppressor != null && !mNoiseSuppressor.getEnabled()) {
+                    mNoiseSuppressor.setEnabled(true);
+                    CommonUtils.logd(TAG, "NoiseSuppressor enabled = "+mNoiseSuppressor.getEnabled());
+                }
+            }
+        }
+    }
 }

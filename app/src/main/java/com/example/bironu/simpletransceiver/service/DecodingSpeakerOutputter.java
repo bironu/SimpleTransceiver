@@ -1,14 +1,6 @@
 package com.example.bironu.simpletransceiver.service;
 
-import android.media.AudioFormat;
-import android.media.AudioManager;
-import android.media.AudioTrack;
-import android.media.ToneGenerator;
-
 import com.example.bironu.simpletransceiver.codecs.Codec;
-import com.example.bironu.simpletransceiver.common.CommonSettings;
-import com.example.bironu.simpletransceiver.common.CommonUtils;
-import com.example.bironu.simpletransceiver.common.DataOutputter;
 import com.example.bironu.simpletransceiver.rtp.RtpPacket;
 
 import java.io.IOException;
@@ -25,40 +17,17 @@ import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 
 public class DecodingSpeakerOutputter
-implements DataOutputter
+extends SpeakerOutputter
 {
 	public static final String TAG = DecodingSpeakerOutputter.class.getSimpleName();
 	
-	private static final int CHANNEL_CONFIG = AudioFormat.CHANNEL_OUT_MONO;
-
 	private Cipher mCipher;
-
-	private final AudioTrack mAudioTrack;
-	private final Codec mCodec;
-	private final short[] mDecodeBuffer;
 	private final RtpSession mRtpSession;
 
 	public DecodingSpeakerOutputter(Codec codec, RtpSession rtpSession) {
+		super(codec);
 		mRtpSession = rtpSession;
-		final int MIN_BUF_SIZE = AudioTrack.getMinBufferSize(codec.samp_rate(), CHANNEL_CONFIG, CommonSettings.AUDIO_FORMAT);
-		mAudioTrack = new AudioTrack(AudioManager.STREAM_VOICE_CALL, codec.samp_rate(),
-				CHANNEL_CONFIG, CommonSettings.AUDIO_FORMAT, MIN_BUF_SIZE, AudioTrack.MODE_STREAM);
-		mCodec = codec;
 		initDecryptCipher();
-		
-		ToneGenerator tg = new ToneGenerator(android.media.AudioManager.STREAM_VOICE_CALL, ToneGenerator.MAX_VOLUME);
-		tg.startTone(ToneGenerator.TONE_DTMF_0, 100);
-		
-		mDecodeBuffer = new short[codec.frame_size()];
-		CommonUtils.noise(mDecodeBuffer, mDecodeBuffer.length, 1024);
-		mAudioTrack.write(mDecodeBuffer, 0, mDecodeBuffer.length);
-		mAudioTrack.write(mDecodeBuffer, 0, mDecodeBuffer.length);
-		mAudioTrack.write(mDecodeBuffer, 0, mDecodeBuffer.length);
-		mAudioTrack.write(mDecodeBuffer, 0, mDecodeBuffer.length);
-		mAudioTrack.write(mDecodeBuffer, 0, mDecodeBuffer.length);
-		mAudioTrack.play();
-
-		CommonUtils.logd(TAG, "MIN_BUF_SIZE = "+MIN_BUF_SIZE);
 	}
 
 	StringBuilder sb = new StringBuilder(6 * 160);
@@ -70,16 +39,7 @@ implements DataOutputter
 		try {
 			// bufはRTPパケットそのまんま
 			mCipher.doFinal(buf, RtpPacket.HEADER_LENGTH, length - RtpPacket.HEADER_LENGTH, buf, RtpPacket.HEADER_LENGTH);
-			final int len = mCodec.decode(buf, mDecodeBuffer, mCodec.frame_size());
-//			if(CommonSettings.DEBUG_LEVEL >= Log.INFO) {
-//				sb.setLength(0);
-//				for(int i = 0; i < len; ++i) {
-//					sb.append(mDecodeBuffer[i]).append(',');
-//				}
-//			}
-			final int writeLength = mAudioTrack.write(mDecodeBuffer, 0, len);
-			CommonUtils.logd(TAG, "speaker write "+(writeLength*2)+" byte");
-//			if(CommonSettings.DEBUG_LEVEL >= Log.INFO) Log.d(TAG, sb.toString());
+			super.output(buf, length);
 		}
 		catch (ShortBufferException e) {
 			e.printStackTrace();
@@ -90,11 +50,6 @@ implements DataOutputter
 		catch (BadPaddingException e) {
 			e.printStackTrace();
 		}
-	}
-
-	@Override
-	public void close() {
-		mAudioTrack.release();
 	}
 
 	private void initDecryptCipher() {

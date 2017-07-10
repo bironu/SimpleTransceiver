@@ -49,34 +49,6 @@ public class Preferences {
 		}
 	}
 
-	public void setImagePort(int port){
-		synchronized(mLock) {
-			SharedPreferences.Editor editor = mPref.edit();
-			editor.putString(mRes.getString(R.string.pref_key_image_port), String.valueOf(port));
-			editor.commit();
-		}
-	}
-
-	public int getImagePort() {
-		synchronized(mLock) {
-			return Integer.parseInt(mPref.getString(mRes.getString(R.string.pref_key_image_port), mRes.getString(R.string.pref_default_value_image_port)));
-		}
-	}
-	
-	public void setFilterThreshold(int threshold){
-		synchronized(mLock) {
-			SharedPreferences.Editor editor = mPref.edit();
-			editor.putString(mRes.getString(R.string.pref_key_filter_threshold), String.valueOf(threshold));
-			editor.commit();
-		}
-	}
-
-	public int getFilterThreshold() {
-		synchronized(mLock) {
-			return Integer.parseInt(mPref.getString(mRes.getString(R.string.pref_key_filter_threshold), mRes.getString(R.string.pref_default_value_filter_threshold)));
-		}
-	}
-
 	public void setAccountLevel(int level){
 		synchronized(mLock) {
 			SharedPreferences.Editor editor = mPref.edit();

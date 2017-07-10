@@ -27,16 +27,14 @@ public class RtpSession
 
 	
 	public static class SendTargetAddress {
-		public SendTargetAddress(String address, int ctrlPort, int rtpPort, int imagePort) {
+		public SendTargetAddress(String address, int ctrlPort, int rtpPort) {
 			mAddress = address;
 			mCtrlPort = ctrlPort;
 			mRtpPort = rtpPort;
-			mImagePort = imagePort;
 		}
 		public final String mAddress;
 		public final int mRtpPort;
 		public final int mCtrlPort;
-		public final int mImagePort;
 	}
 
 	public RtpSession() {
@@ -165,15 +163,15 @@ public class RtpSession
 		endSession();
 	}
 	
-	public void addSendTarget(String address, int ctrlPort, int rtpPort, int imagePort) {
-		SendTargetAddress target = new SendTargetAddress(address, ctrlPort, rtpPort, imagePort);
+	public void addSendTarget(String address, int ctrlPort, int rtpPort) {
+		SendTargetAddress target = new SendTargetAddress(address, ctrlPort, rtpPort);
 		synchronized(mAddressList) {
 			mAddressList.add(target);
 		}
 	}
 	
-	public void removeSendTarget(String address, int ctrlPort, int rtpPort, int imagePort) {
-		SendTargetAddress target = new SendTargetAddress(address, ctrlPort, rtpPort, imagePort);
+	public void removeSendTarget(String address, int ctrlPort, int rtpPort) {
+		SendTargetAddress target = new SendTargetAddress(address, ctrlPort, rtpPort);
 		synchronized(mAddressList) {
 			mAddressList.remove(target);
 		}
@@ -223,22 +221,6 @@ public class RtpSession
 		return result;
 	}
 	
-	public List<PacketOutputter.SendTarget> getImageSendTargetList() {
-		final List<PacketOutputter.SendTarget> result = new ArrayList<PacketOutputter.SendTarget>(mAddressList.size());
-		synchronized(mAddressList) {
-			for(SendTargetAddress address : mAddressList) {
-				try {
-					PacketOutputter.SendTarget target = new PacketOutputter.SendTarget(InetAddress.getByName(address.mAddress), address.mImagePort);
-					result.add(target);
-				}
-				catch (UnknownHostException e) {
-					e.printStackTrace();
-				}
-			}
-		}
-		return result;
-	}
-
 	public List<String> getAddressList() {
 		final List<String> result = new ArrayList<String>(mAddressList.size());
 		synchronized(mAddressList) {

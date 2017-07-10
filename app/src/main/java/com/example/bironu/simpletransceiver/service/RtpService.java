@@ -38,7 +38,7 @@ public class RtpService extends Service
 	public static final String ACTION_END_RTP_RECEIVE = CommonSettings.BASE_PACKAGE+".action.END_RTP_RECEIVE";
 	
 	private final ExecutorService mExec = Executors.newCachedThreadPool();
-	private final List<Worker> mWorkerList = new ArrayList<Worker>();
+	private final List<Worker> mWorkerList = new ArrayList<>();
 	private Codec mCodec;
 	private InetAddress mLocalInetAddress;
 	private DataRelayer mMic2Packet;
@@ -61,7 +61,7 @@ public class RtpService extends Service
 	private MyBroadcastReceiver mBroadcastReceiver;
 	
 	public class RtpServiceBinder extends Binder {
-		public void beginRtpReceiver(CtrlPacketStart start, InetAddress remoteAddress) {
+		void beginRtpReceiver(CtrlPacketStart start, InetAddress remoteAddress) {
 			RtpService.this.beginRtpReceiver(start, remoteAddress);
 		}
 
@@ -89,12 +89,12 @@ public class RtpService extends Service
 			RtpService.this.endCtrlReceiver();
 		}
 		
-		public void addSendTarget(String address, int ctrlPort, int rtpPort, int imagePort) {
-			mRtpSession.addSendTarget(address, ctrlPort, rtpPort, imagePort);
+		public void addSendTarget(String address, int ctrlPort, int rtpPort) {
+			mRtpSession.addSendTarget(address, ctrlPort, rtpPort);
 		}
 		
-		public void removeSendTarget(String address, int ctrlPort, int rtpPort, int imagePort) {
-			mRtpSession.removeSendTarget(address, ctrlPort, rtpPort, imagePort);
+		public void removeSendTarget(String address, int ctrlPort, int rtpPort) {
+			mRtpSession.removeSendTarget(address, ctrlPort, rtpPort);
 		}
 		
 		public void removeSendTarget(int location) {
@@ -113,10 +113,6 @@ public class RtpService extends Service
 			return mRtpSession.getRtpSendTargetList();
 		}
 		
-		public List<PacketOutputter.SendTarget> getImageSendTargetList() {
-			return mRtpSession.getImageSendTargetList();
-		}
-	
 		public List<String> getAddressList() {
 			return mRtpSession.getAddressList();
 		}
@@ -242,7 +238,7 @@ public class RtpService extends Service
 				mRtpSession.setSessionParam(accountLevel, mCodec);
 
 				// こいつを先に作るとAES暗号鍵が作られる
-				DataInputter micIn = new EncodingMicInputter(mCodec, prefs.getFilterThreshold(), mRtpSession);
+				DataInputter micIn = new EncodingMicInputter(mCodec, mRtpSession);
 				PacketOutputter packetOut = new RtpPacketOutputter(0, mLocalInetAddress, mRtpSession);
 
 				List<PacketOutputter.SendTarget> rtpTargetList = mRtpSession.getRtpSendTargetList();

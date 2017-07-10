@@ -26,7 +26,7 @@ package com.example.bironu.simpletransceiver.rtp;
  */
 public class RtpPacket {
 	public static final int HEADER_LENGTH = 12;
-	public static final int MAX_HEADER_LENGTH = HEADER_LENGTH + 4 * 15;
+	//public static final int MAX_HEADER_LENGTH = HEADER_LENGTH + 4 * 15;
 	
 	/** Creates a new RTP packet */
 	public RtpPacket(byte[] buffer, int ptype, int seqn, long timestamp, long ssrc) {

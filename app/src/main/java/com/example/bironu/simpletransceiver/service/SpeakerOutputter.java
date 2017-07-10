@@ -3,6 +3,7 @@ package com.example.bironu.simpletransceiver.service;
 import android.media.AudioFormat;
 import android.media.AudioManager;
 import android.media.AudioTrack;
+import android.media.ToneGenerator;
 
 import com.example.bironu.simpletransceiver.codecs.Codec;
 import com.example.bironu.simpletransceiver.common.CommonSettings;
@@ -19,21 +20,29 @@ implements DataOutputter
 	private static final int CHANNEL_CONFIG = AudioFormat.CHANNEL_OUT_MONO;
 	
 	private final AudioTrack mAudioTrack;
+	private final Codec mCodec;
+	private final short[] mDecodeBuffer;
 
 	public SpeakerOutputter(Codec codec) {
-		final int MIN_BUF_SIZE = AudioTrack.getMinBufferSize(codec.samp_rate(), CHANNEL_CONFIG, CommonSettings.AUDIO_FORMAT);
+		final int minBufSize = AudioTrack.getMinBufferSize(codec.samp_rate(), CHANNEL_CONFIG, CommonSettings.AUDIO_FORMAT);
 		mAudioTrack = new AudioTrack(AudioManager.STREAM_VOICE_CALL, codec.samp_rate(),
-				CHANNEL_CONFIG, CommonSettings.AUDIO_FORMAT, MIN_BUF_SIZE * 2, AudioTrack.MODE_STREAM);
-		short[] buf = new short[MIN_BUF_SIZE/2];
-		CommonUtils.noise(buf, buf.length, 1024);
-		mAudioTrack.write(buf, 0, buf.length);
+				CHANNEL_CONFIG, CommonSettings.AUDIO_FORMAT, minBufSize * 2, AudioTrack.MODE_STREAM);
+		mCodec = codec;
+
+        ToneGenerator tg = new ToneGenerator(android.media.AudioManager.STREAM_VOICE_CALL, ToneGenerator.MAX_VOLUME);
+        tg.startTone(ToneGenerator.TONE_DTMF_0, 100);
+
+        mDecodeBuffer = new short[codec.frame_size()];
+		CommonUtils.noise(mDecodeBuffer, mDecodeBuffer.length, 1024);
+		mAudioTrack.write(mDecodeBuffer, 0, mDecodeBuffer.length);
 		mAudioTrack.play();
-		CommonUtils.logd(TAG, "MIN_BUF_SIZE = "+MIN_BUF_SIZE);
+		CommonUtils.logd(TAG, "minBufSize = "+minBufSize);
 	}
 
 	@Override
 	public void output(byte[] buf, int length) throws IOException {
-		final int writeLength = mAudioTrack.write(buf, 0, length);
+		final int len = mCodec.decode(buf, mDecodeBuffer, mDecodeBuffer.length);
+		final int writeLength = mAudioTrack.write(mDecodeBuffer, 0, len);
 		CommonUtils.logd(TAG, "speaker write "+writeLength+" byte");
 	}
 

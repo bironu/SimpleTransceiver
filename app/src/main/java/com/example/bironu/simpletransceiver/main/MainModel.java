@@ -42,9 +42,8 @@ class MainModel {
             if(mRtpServiceBinder != null) {
                 Preferences prefs = new Preferences(mActivity.getApplicationContext());
                 final int rtpPort = prefs.getRtpPort();
-                final int imagePort = prefs.getImagePort();
                 final int ctrlPort = prefs.getCtrlPort();
-                mRtpServiceBinder.addSendTarget(ipAddress, ctrlPort, rtpPort, imagePort);
+                mRtpServiceBinder.addSendTarget(ipAddress, ctrlPort, rtpPort);
                 mMainViewModel.setForwardIpAddressList(mRtpServiceBinder.getAddressList());
             }
         }
