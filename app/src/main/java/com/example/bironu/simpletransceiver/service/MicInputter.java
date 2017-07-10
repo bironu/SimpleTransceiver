@@ -34,7 +34,7 @@ implements DataInputter
 	public MicInputter(Codec codec) throws SocketException {
 		final int minBufSize = AudioRecord.getMinBufferSize(codec.samp_rate(), CHANNEL_CONFIG, CommonSettings.AUDIO_FORMAT);
         mCodec = codec;
-		mBuffer = new byte[codec.frame_size() * 2 + RtpPacket.HEADER_LENGTH];
+		mBuffer = new byte[codec.frame_size() * 2 + RtpPacket.MAX_HEADER_LENGTH];
         mReadBuffer = new short[codec.frame_size()];
 		mAudioRecord = new AudioRecord(AudioSource.DEFAULT, codec.samp_rate(), CHANNEL_CONFIG, CommonSettings.AUDIO_FORMAT, minBufSize);
 		aec();
@@ -49,9 +49,8 @@ implements DataInputter
 //			// この辺で独自のフィルタとかかけられるかも
 //		}
         final int encResult = mCodec.encode(mReadBuffer, 0, mBuffer, length);
-        int result = encResult + RtpPacket.HEADER_LENGTH;
         CommonUtils.logd(TAG, "encode result " + length*2 + " byte -> "+encResult+" byte");
-		return result;
+		return encResult;
 	}
 	
 	@Override

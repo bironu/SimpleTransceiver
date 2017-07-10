@@ -11,7 +11,7 @@ import java.net.SocketException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class PacketOutputter
+class PacketOutputter
 implements DataOutputter
 {
 	public static final String TAG = PacketOutputter.class.getSimpleName();
@@ -20,7 +20,7 @@ implements DataOutputter
 	private final DatagramPacket mPacket = new DatagramPacket(new byte[0], 0);
 	private final Object mLock = new Object();
 	
-	public static class SendTarget {
+	static class SendTarget {
 		public InetAddress address;
 		public int port;
 		public SendTarget(InetAddress address, int port) {
@@ -28,7 +28,7 @@ implements DataOutputter
 			this.port = port;
 		}
 	}
-	private ArrayList<SendTarget> mSendTargetList = new ArrayList<SendTarget>();
+	private ArrayList<SendTarget> mSendTargetList = new ArrayList<>();
 
 	public void addSendTarget(InetAddress address, int port) {
 		addSendTarget(new SendTarget(address, port));

@@ -13,7 +13,7 @@ extends PacketInputter
 {
 	public static final String TAG = RtpPacketInputter.class.getSimpleName();
 	
-	private static final int PACKET_SIZE = 360;
+	private static final int PACKET_SIZE = 1472;
 	private static final int MAX_DROPOUT = 3000;
 	private static final int MAX_MISORDER = 100;
 
@@ -48,7 +48,7 @@ extends PacketInputter
 	public RtpPacketInputter(int port, InetAddress addr, RtpSession rtpSession, InetAddress remoteAddress) throws SocketException {
 		super(port, addr, PACKET_SIZE);
 		super.addFilter(new IpAddressFilter(remoteAddress));
-		mRtpPacket = new RtpPacket(this.getBuffer());
+		mRtpPacket = new RtpPacket(null);
 		mRtpSession = rtpSession;
 		initParam();
 	}
@@ -57,6 +57,8 @@ extends PacketInputter
 	public int input() throws IOException {
 		int result = super.input();
 		CommonUtils.logd(TAG, "packet receive "+result+" byte");
+		mRtpPacket.setBuffer(this.getBuffer(), result);
+
 		// セッション確立していなければ捨てる
 		if(!mRtpSession.isSession()) {
 			CommonUtils.logd(TAG, "invalid session. session level = "+mRtpSession.getSessionLevel());

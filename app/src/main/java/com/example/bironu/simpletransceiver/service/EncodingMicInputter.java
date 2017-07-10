@@ -2,7 +2,6 @@ package com.example.bironu.simpletransceiver.service;
 
 import com.example.bironu.simpletransceiver.codecs.Codec;
 import com.example.bironu.simpletransceiver.common.CommonUtils;
-import com.example.bironu.simpletransceiver.rtp.RtpPacket;
 
 import java.io.IOException;
 import java.net.SocketException;
@@ -39,10 +38,9 @@ extends MicInputter
 		try {
 			if(mCipher != null){
 				byte[] buf = this.getBuffer();
-                CommonUtils.logd(TAG, "crypto input length = " + (encResult - RtpPacket.HEADER_LENGTH) + " byte");
-				int cryptoLength = mCipher.doFinal(buf, RtpPacket.HEADER_LENGTH, encResult - RtpPacket.HEADER_LENGTH, buf, RtpPacket.HEADER_LENGTH);
+				int cryptoLength = mCipher.doFinal(buf, 0, encResult, buf, 0);
 				CommonUtils.logd(TAG, "crypto length = " + cryptoLength + " byte");
-				result = cryptoLength + RtpPacket.HEADER_LENGTH;
+				result = cryptoLength;
 			}
 		}
 		catch (ShortBufferException e) {

@@ -24,7 +24,7 @@ implements DataInputter
 	public interface Filter {
 		boolean filtering(DatagramPacket packet);
 	}
-	private List<Filter> mFilterList = new ArrayList<Filter>();
+	private List<Filter> mFilterList = new ArrayList<>();
 	
 	public PacketInputter(int port, InetAddress addr, int bufSize) throws SocketException {
 		mSocket = new DatagramSocket(port, addr);

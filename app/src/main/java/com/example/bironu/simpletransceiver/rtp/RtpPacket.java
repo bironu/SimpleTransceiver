@@ -26,42 +26,42 @@ package com.example.bironu.simpletransceiver.rtp;
  */
 public class RtpPacket {
 	public static final int HEADER_LENGTH = 12;
-	//public static final int MAX_HEADER_LENGTH = HEADER_LENGTH + 4 * 15;
+	public static final int MAX_HEADER_LENGTH = HEADER_LENGTH + 4 * 15;
 	
-	/** Creates a new RTP packet */
-	public RtpPacket(byte[] buffer, int ptype, int seqn, long timestamp, long ssrc) {
-		if(buffer == null) {
-			throw new NullPointerException("buffer is null.");
-		}
-		packet = buffer;
-		setVersion(2);
-		setPayloadType(ptype);
-		setSequenceNumber(seqn);
-		setTimestamp(timestamp);
-		setSsrc(ssrc);
-	}
-
+//	/** Creates a new RTP packet */
+//	public RtpPacket(byte[] buffer, int ptype, int seqn, long timestamp, long ssrc) {
+//		if(buffer == null) {
+//			throw new NullPointerException("buffer is null.");
+//		}
+//		packet = buffer;
+//		setVersion(2);
+//		setPayloadType(ptype);
+//		setSequenceNumber(seqn);
+//		setTimestamp(timestamp);
+//		setSsrc(ssrc);
+//	}
+//
 	/** Creates a new RTP packet */
 	public RtpPacket(byte[] buffer) {
 		setBuffer(buffer);
 	}
 	
 	/* RTP packet buffer containing both the RTP header and payload */
-	byte[] packet;
+	byte[] mPacket;
 
 	/* RTP packet length */
-	int packet_len;
+	int mPacketLength;
 
 	/* RTP header length */
 	// int header_len;
 	/** Gets the RTP packet */
 	public byte[] getPacket() {
-		return packet;
+		return mPacket;
 	}
 
 	/** Gets the RTP packet length */
-	public int getLength() {
-		return packet_len;
+	public int getPacketLength() {
+		return mPacketLength;
 	}
 
 	/** Gets the RTP header length */
@@ -71,12 +71,12 @@ public class RtpPacket {
 
 	/** Gets the RTP header length */
 	public int getPayloadLength() {
-		return packet_len - getHeaderLength();
+		return mPacketLength - getHeaderLength();
 	}
 
 	/** Sets the RTP payload length */
 	public void setPayloadLength(int len) {
-		packet_len = getHeaderLength() + len;
+		mPacketLength = getHeaderLength() + len;
 	}
 
 	// version (V): 2 bits
@@ -92,95 +92,96 @@ public class RtpPacket {
 
 	/** Gets the version (V) */
 	public int getVersion() {
-		return (packet[0] >> 6 & 0x03);
+		return (mPacket[0] >> 6 & 0x03);
 	}
 
 	/** Sets the version (V) */
 	public void setVersion(int v) {
-		packet[0] = (byte) ((packet[0] & 0x3F) | ((v & 0x03) << 6));
+		mPacket[0] = (byte) ((mPacket[0] & 0x3F) | ((v & 0x03) << 6));
 	}
 
 	/** Whether has padding (P) */
 	public boolean hasPadding() {
-		return getBit(packet[0], 5);
+		return getBit(mPacket[0], 5);
 	}
 
 	/** Set padding (P) */
 	public void setPadding(boolean p) {
-		packet[0] = setBit(p, packet[0], 5);
+		mPacket[0] = setBit(p, mPacket[0], 5);
 	}
 
 	/** Whether has extension (X) */
 	public boolean hasExtension() {
-		return getBit(packet[0], 4);
+		return getBit(mPacket[0], 4);
 	}
 
 	/** Set extension (X) */
 	public void setExtension(boolean x) {
-		packet[0] = setBit(x, packet[0], 4);
+		mPacket[0] = setBit(x, mPacket[0], 4);
 	}
 
 	/** Gets the CSCR count (CC) */
 	public int getCscrCount() {
-		return (packet[0] & 0x0F);
+		return (mPacket[0] & 0x0F);
 	}
 
 	/** Whether has marker (M) */
 	public boolean hasMarker() {
-		return getBit(packet[1], 7);
+		return getBit(mPacket[1], 7);
 	}
 
 	/** Set marker (M) */
 	public void setMarker(boolean m) {
-		packet[1] = setBit(m, packet[1], 7);
+		mPacket[1] = setBit(m, mPacket[1], 7);
 	}
 
 	/** Gets the payload type (PT) */
 	public int getPayloadType() {
-		return (packet[1] & 0x7F);
+		return (mPacket[1] & 0x7F);
 	}
 
 	/** Sets the payload type (PT) */
 	public void setPayloadType(int pt) {
-		packet[1] = (byte) ((packet[1] & 0x80) | (pt & 0x7F));
+		mPacket[1] = (byte) ((mPacket[1] & 0x80) | (pt & 0x7F));
 	}
 
 	/** Gets the sequence number */
 	public int getSequenceNumber() {
-		return getInt(packet, 2, 4);
+		return getInt(mPacket, 2, 4);
 	}
 
 	/** Sets the sequence number */
 	public void setSequenceNumber(int sn) {
-		setInt(sn, packet, 2, 4);
+		setInt(sn, mPacket, 2, 4);
 	}
 
 	/** Gets the timestamp */
 	public long getTimestamp() {
-		return getLong(packet, 4, 8);
+		return getLong(mPacket, 4, 8);
 	}
 
 	/** Sets the timestamp */
 	public void setTimestamp(long timestamp) {
-		setLong(timestamp, packet, 4, 8);
+		setLong(timestamp, mPacket, 4, 8);
 	}
 
 	/** Gets the SSRC */
 	public long getSsrc() {
-		return getLong(packet, 8, 12);
+		return getLong(mPacket, 8, 12);
 	}
 
 	/** Sets the SSRC */
 	public void setSsrc(long ssrc) {
-		setLong(ssrc, packet, 8, 12);
+		setLong(ssrc, mPacket, 8, 12);
 	}
 
 	/** Gets the CSCR list */
 	public long[] getCscrList() {
 		int cc = getCscrCount();
 		long[] cscr = new long[cc];
-		for (int i = 0; i < cc; i++)
-			cscr[i] = getLong(packet, 12 + 4 * i, 16 + 4 * i);
+		for (int i = 0; i < cc; i++) {
+			cscr[i] = getLong(mPacket, 12 + 4 * i, 16 + 4 * i);
+		}
 		return cscr;
 	}
 
@@ -190,9 +191,9 @@ public class RtpPacket {
 		if (cc > 15) {
 			cc = 15;
 		}
-		packet[0] = (byte) (((packet[0] >> 4) << 4) + cc);
+		mPacket[0] = (byte) (((mPacket[0] >> 4) << 4) + cc);
 		for (int i = 0; i < cc; i++) {
-			setLong(cscr[i], packet, 12 + 4 * i, 16 + 4 * i);
+			setLong(cscr[i], mPacket, 12 + 4 * i, 16 + 4 * i);
 		}
 		// header_len=12+4*cc;
 	}
@@ -200,18 +201,19 @@ public class RtpPacket {
 	/** Sets the payload */
 	public void setPayload(byte[] payload, int len) {
 		int header_len = getHeaderLength();
-		for (int i = 0; i < len; i++)
-			packet[header_len + i] = payload[i];
-		packet_len = header_len + len;
+		for (int i = 0; i < len; i++) {
+			mPacket[header_len + i] = payload[i];
+		}
+		mPacketLength = header_len + len;
 	}
 
 	/** Gets the payload */
 	public byte[] getPayload() {
 		int header_len = getHeaderLength();
-		int len = packet_len - header_len;
+		int len = mPacketLength - header_len;
 		byte[] payload = new byte[len];
 		for (int i = 0; i < len; i++)
-			payload[i] = packet[header_len + i];
+			payload[i] = mPacket[header_len + i];
 		return payload;
 	}
 
@@ -264,12 +266,12 @@ public class RtpPacket {
 	}
 
 	public void setLength(int length) {
-		packet_len = length;
+		mPacketLength = length;
 	}
 
 	public void setBuffer(byte[] buf, int length) {
-		packet = buf;
-		packet_len = length;
+		mPacket = buf;
+		mPacketLength = length;
 	}
 	
 	public void setBuffer(byte[] buf) {

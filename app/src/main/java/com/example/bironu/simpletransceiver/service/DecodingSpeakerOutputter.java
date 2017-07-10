@@ -23,10 +23,12 @@ extends SpeakerOutputter
 	
 	private Cipher mCipher;
 	private final RtpSession mRtpSession;
+    private final RtpPacket mRtpPacket;
 
 	public DecodingSpeakerOutputter(Codec codec, RtpSession rtpSession) {
 		super(codec);
 		mRtpSession = rtpSession;
+        mRtpPacket = new RtpPacket(null);
 		initDecryptCipher();
 	}
 
@@ -38,7 +40,8 @@ extends SpeakerOutputter
 		}
 		try {
 			// bufはRTPパケットそのまんま
-			mCipher.doFinal(buf, RtpPacket.HEADER_LENGTH, length - RtpPacket.HEADER_LENGTH, buf, RtpPacket.HEADER_LENGTH);
+            mRtpPacket.setBuffer(buf, length);
+			mCipher.doFinal(mRtpPacket.getPacket(), mRtpPacket.getHeaderLength(), mRtpPacket.getPayloadLength(), mRtpPacket.getPacket(), mRtpPacket.getHeaderLength());
 			super.output(buf, length);
 		}
 		catch (ShortBufferException e) {

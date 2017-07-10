@@ -54,23 +54,23 @@ public interface Codec {
 //	72-76	reserved	N/A	N/A	N/A
 //	77-95	unassigned	-	-	-
 //	96-127	dynamic	-	-	動的割り当て
-	public static final int TYPE_ULAW = 0;
-	public static final int TYPE_GSM = 3;
-	public static final int TYPE_ALAW = 8;
-	public static final int TYPE_G722 = 9;
-	public static final int TYPE_G729 = 18;
-	public static final int TYPE_SPEEX = 97;
-	public static final int TYPE_BV16 = 106;
-	public static final int TYPE_SILK8 = 117;
-	public static final int TYPE_SILK16 = 119;
-	public static final int TYPE_SILK24 = 120;
+int TYPE_ULAW = 0;
+	int TYPE_GSM = 3;
+	int TYPE_ALAW = 8;
+	int TYPE_G722 = 9;
+	int TYPE_G729 = 18;
+	int TYPE_SPEEX = 97;
+	int TYPE_BV16 = 106;
+	int TYPE_SILK8 = 117;
+	int TYPE_SILK16 = 119;
+	int TYPE_SILK24 = 120;
 
-	int decode(byte encoded[], short lin[], int size);
+	int decode(byte encoded[], int offset, short lin[], int size);
 	int encode(short lin[], int offset, byte alaw[], int frames);
 	int samp_rate();
 	int frame_size();
 	int open();
 	void close();
-	public String name();
+	String name();
 	int number();
 }

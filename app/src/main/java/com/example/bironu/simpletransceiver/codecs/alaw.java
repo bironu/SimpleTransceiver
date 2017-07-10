@@ -12,8 +12,8 @@ implements Codec
 		return 0;
 	}
 
-	public int decode(byte enc[], short lin[], int frames) {
-		G711.alaw2linear(enc, lin, frames);
+	public int decode(byte enc[], int offset, short lin[], int frames) {
+		G711.alaw2linear(enc, offset, lin, frames);
 		return frames;
 	}
 

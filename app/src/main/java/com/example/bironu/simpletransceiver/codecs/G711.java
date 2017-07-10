@@ -310,7 +310,6 @@ public class G711 {
 		 90, 91, 88, 89, 94, 95, 92, 93, 82, 83, 80, 81, 86, 87, 84, 85
 	};
 
-	//change G711 ulaw start
 	static final int _u2a[] = { 					/* u- to A-law conversions */
 		1,		1,		2,		2,		3,		3,		4,		4,
 		5,		5,		6,		6,		7,		7,		8,		8,
@@ -347,57 +346,56 @@ public class G711 {
 		112,	113,	114,	115,	116,	117,	118,	119,
 		120,	121,	122,	123,	124,	125,	126,	127};
 
-	//change end
-	
 	public static void init() {
 	}
 	
 	static {
-	 		int i;
-			for (i = 0; i < 256; i++)
-				a2s[i] = (short)_a2s[i];
-			for (i = 0; i < 65536; i++)
-				s2a[i] = (byte)_s2a[i >> 4];
+			for (int i = 0; i < 256; i++) {
+				a2s[i] = (short) _a2s[i];
+			}
+			for (int i = 0; i < 65536; i++) {
+				s2a[i] = (byte) _s2a[i >> 4];
+			}
 	}
 
-	public static void alaw2linear(byte alaw[],short lin[],int frames) {
-		int i;
-		for (i = 0; i < frames; i++)
-			lin[i] = a2s[alaw[i+12] & 0xff];
+	public static void alaw2linear(byte alaw[], int offset, short lin[], int frames) {
+		for (int i = 0; i < frames; i++) {
+            lin[i] = a2s[alaw[i + offset] & 0xff];
+        }
 	}
 	
-	public static void alaw2linear(byte alaw[],short lin[],int frames,int mu) {
-		int i;
-		for (i = 0; i < frames; i++)
-			lin[i] = a2s[alaw[i/mu+12] & 0xff];
+//	public static void alaw2linear(byte alaw[], short lin[], int frames,int mu) {
+//		for (int i = 0; i < frames; i++) {
+//			lin[i] = a2s[alaw[i/mu] & 0xff];
+//      }
+//	}
+	
+	public static void linear2alaw(short lin[], int offset, byte alaw[], int frames) {
+		for (int i = 0; i < frames; i++) {
+            alaw[i] = s2a[lin[i + offset] & 0xffff];
+        }
 	}
 	
-	public static void linear2alaw(short lin[],int offset,byte alaw[],int frames) {
-		int i;
-		for (i = 0; i < frames; i++)
-			alaw[i+12] = s2a[lin[i+offset] & 0xffff];
-	}
-	
-	//change g711 ulaw start
    protected static int alaw2ulaw(int aval)
-   {  aval&=0xff;
+   {
+       aval&=0xff;
   	   return ((aval & 0x80)!=0)? (0xFF^_a2u[aval^0xD5]) : (0x7F^_a2u[aval^0x55]);
    }
 
    protected static int ulaw2alaw(int uval)
-   {  uval&=0xff;
+   {
+       uval&=0xff;
   	   return ((uval&0x80)!=0)? (0xD5^(_u2a[0xFF^uval]-1)) : (0x55^(_u2a[0x7F^uval]-1));
    }
 
-	public static void ulaw2linear(byte ulaw[],short lin[],int frames) {
-		int i;
-		for (i = 0; i < frames; i++)
-			lin[i] = a2s[ulaw2alaw(ulaw[i+12] & 0xff)];
+	public static void ulaw2linear(byte ulaw[], int offset, short lin[], int frames) {
+		for (int i = 0; i < frames; i++) {
+            lin[i] = a2s[ulaw2alaw(ulaw[i + offset] & 0xff)];
+        }
 	}
-	public static void linear2ulaw(short lin[],int offset,byte ulaw[],int frames) {
-		int i;
-		for (i = 0; i < frames; i++)
-			ulaw[i+12] = (byte)alaw2ulaw(s2a[lin[i+offset] & 0xffff]);
+	public static void linear2ulaw(short lin[], int offset, byte ulaw[], int frames) {
+		for (int i = 0; i < frames; i++) {
+            ulaw[i] = (byte) alaw2ulaw(s2a[lin[i + offset] & 0xffff]);
+        }
 	}	
-	//change end
 }
