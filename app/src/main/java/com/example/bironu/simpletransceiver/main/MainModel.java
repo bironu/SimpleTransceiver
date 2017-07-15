@@ -5,15 +5,18 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.media.AudioManager;
+import android.net.ConnectivityManager;
 import android.text.TextUtils;
 
-import com.example.bironu.simpletransceiver.common.CommonSettings;
 import com.example.bironu.simpletransceiver.common.CommonUtils;
 import com.example.bironu.simpletransceiver.preference.Preferences;
+import com.example.bironu.simpletransceiver.preference.PreferencesActivity;
 import com.example.bironu.simpletransceiver.service.RtpService;
 
+import java.net.InetAddress;
+
 /**
- *
+ * MainActivityの各種イベントや操作に応じて状態を管理するクラス。
  */
 class MainModel {
     public static final String TAG = MainModel.class.getSimpleName();
@@ -23,9 +26,9 @@ class MainModel {
     private RtpService.RtpServiceBinder mRtpServiceBinder;
 
     /**
-     *
-     * @param activity
-     * @param mainViewModel
+     * コンストラクタ。
+     * @param activity 管理対象となるActivity
+     * @param mainViewModel 管理対象となるViewとbindしたクラス
      */
     MainModel(Activity activity, MainViewModel mainViewModel) {
         mActivity = activity;
@@ -33,9 +36,9 @@ class MainModel {
     }
 
     /**
-     *
+     * 送信先IPアドレスを追加する。
      */
-    void onClickAddForwardIpAddress() {
+    void addForwardIpAddress() {
         final String ipAddress = mMainViewModel.getForwardIpAddress();
         if(!TextUtils.isEmpty(ipAddress)) {
             mMainViewModel.setForwardIpAddress("");
@@ -50,21 +53,25 @@ class MainModel {
     }
 
     /**
-     *
-     * @param isChecked
+     * スピーカーモードを設定する。
+     * @param isChecked 設定するスピーカーモード、{@code true}ならスピーカーON、{@code false}ならスピーカーOFF
      */
-    void onCheckedChangedCheckSpeaker(boolean isChecked) {
+    void setSpeakerMode(boolean isChecked) {
         AudioManager am = (AudioManager) mActivity.getSystemService(Context.AUDIO_SERVICE);
         am.setSpeakerphoneOn(isChecked);
     }
 
-    void onCheckedChangedToggleSend(boolean isChecked) {
+    /**
+     * 音声の送信ステータスを変更する。
+     * @param isChecked 音声の送信ステータス、{@code true}なら送信開始、{@code false}なら送信終了
+     */
+    void changeSendStatus(boolean isChecked) {
         if (mRtpServiceBinder != null) {
             if (isChecked) {
                 // 送信開始失敗したら
                 if (!mRtpServiceBinder.beginRtpSender()) {
                     // 送信取りやめ
-                    mMainViewModel.setSendMode(false);
+                    mMainViewModel.setSendStatus(false);
                 }
             }
             else {
@@ -74,10 +81,10 @@ class MainModel {
     }
 
     /**
-     *
-     * @param position
+     * 指定の送信先IPアドレスを削除する。
+     * @param position 削除したい送信先IPアドレスリストの位置
      */
-    void onItemClickListForwardIpAddress(int position) {
+    void removeForwardIpAddressItem(int position) {
         if(mRtpServiceBinder != null) {
             mRtpServiceBinder.removeSendTarget(position);
             mMainViewModel.setForwardIpAddressList(mRtpServiceBinder.getAddressList());
@@ -85,9 +92,9 @@ class MainModel {
     }
 
     /**
-     *
-     * @param componentName
-     * @param iBinder
+     *　サービスにバインドした時に呼ばれる。
+     * @param componentName バインドしたサービスの名前？
+     * @param iBinder サービスのバインダ
      */
     void onServiceConnected(ComponentName componentName, RtpService.RtpServiceBinder iBinder) {
         CommonUtils.logd(TAG, "onServiceConnected : "+componentName);
@@ -96,8 +103,8 @@ class MainModel {
     }
 
     /**
-     *
-     * @param componentName
+     * バインドしたサービスが不慮の事故で切断された時に呼ばれる。
+     * @param componentName 切断されたサービスの名前？
      */
     void onServiceDisconnected(ComponentName componentName) {
         CommonUtils.logd(TAG, "onServiceDisconnected : "+componentName);
@@ -105,26 +112,54 @@ class MainModel {
     }
 
     /**
-     *
-     * @param intent
+     * BroadcastIntentを受信したときに呼ばれる。
+     * @param intent 受信したBroadcastIntent
      */
     void onReceive(Intent intent) {
         final String action = intent.getAction();
-        if(CommonSettings.ACTION_NET_CONN_CONNECTIVITY_CHANGE.equals(action)) {
-            CommonUtils.logd(TAG, "receive android.net.conn.CONNECTIVITY_CHANGE !!!");
-            mMainViewModel.setLocalIpAddress();
+        CommonUtils.logd(TAG, "receive " + action);
+        if(ConnectivityManager.CONNECTIVITY_ACTION.equals(action)) {
+            final String ipAddress = getLocalIpAddress();
+            mMainViewModel.setLocalIpAddress(ipAddress);
         }
         else if(RtpService.ACTION_BEGIN_RTP_RECEIVE.equals(action)) {
-            CommonUtils.logd(TAG, "receive RtpService.ACTION_BEGIN_RTP_RECEIVE !!!");
             mMainViewModel.setIsReceiveRtp(true);
-            mMainViewModel.setSendMode(false);
+            mMainViewModel.setSendStatus(false);
         }
         else if(RtpService.ACTION_END_RTP_RECEIVE.equals(action)) {
-            CommonUtils.logd(TAG, "receive RtpService.ACTION_END_RTP_RECEIVE !!!");
             mMainViewModel.setIsReceiveRtp(false);
         }
         //else {
         //	// do nothing
         //}
     }
+
+    /**
+     * 設定画面を呼び出す。
+     */
+    void startPreferencesActivity() {
+        mActivity.startActivity(new Intent(mActivity, PreferencesActivity.class));
+    }
+
+    /**
+     * メイン画面を終了する。
+     */
+    void finishMainActivity() {
+        mActivity.finish();
+    }
+
+    /**
+     * 自分のIPアドレスを取得する。
+     * @return IPアドレス
+     */
+    private String getLocalIpAddress() {
+        String result = null;
+        InetAddress ipAddress = CommonUtils.getIPAddress();
+        if (ipAddress != null) {
+            result = ipAddress.toString();
+        }
+        return result;
+    }
+
+
 }

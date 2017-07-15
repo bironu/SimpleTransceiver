@@ -5,6 +5,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.net.ConnectivityManager;
 import android.os.Binder;
 import android.os.IBinder;
 
@@ -50,8 +51,8 @@ public class RtpService extends Service
 		@Override
 		public void onReceive(Context context, Intent intent) {
 			final String action = intent.getAction();
-			if(CommonSettings.ACTION_NET_CONN_CONNECTIVITY_CHANGE.equals(action)) {
-				CommonUtils.logd(TAG, "receive android.net.conn.CONNECTIVITY_CHANGE !!!");
+			CommonUtils.logd(TAG, "receive " + action);
+			if(ConnectivityManager.CONNECTIVITY_ACTION.equals(action)) {
 				if(context instanceof RtpService) {
 					((RtpService) context).setLocalIpAddress();
 				}
@@ -130,7 +131,7 @@ public class RtpService extends Service
 		mCodec.open();
 		mBroadcastReceiver = new MyBroadcastReceiver();
 		IntentFilter filter = new IntentFilter();
-		filter.addAction(CommonSettings.ACTION_NET_CONN_CONNECTIVITY_CHANGE);
+		filter.addAction(ConnectivityManager.CONNECTIVITY_ACTION);
 		this.registerReceiver(mBroadcastReceiver, filter);
 	}
 
@@ -183,7 +184,7 @@ public class RtpService extends Service
 				final int rtpPort = prefs.getRtpPort();
 	
 				RtpPacketInputter packetIn = new RtpPacketInputter(rtpPort, mLocalInetAddress, mRtpSession, remoteAddress);
-				DataOutputter speakerOut = new DecodingSpeakerOutputter(mCodec, mRtpSession);
+				DataOutputter speakerOut = new DecryptSpeakerOutputter(mCodec, mRtpSession);
 	
 				mPacket2Speaker = new DataRelayer(packetIn);
 				List<PacketOutputter.SendTarget> targetList = mRtpSession.getRtpSendTargetList();
@@ -238,7 +239,7 @@ public class RtpService extends Service
 				mRtpSession.setSessionParam(accountLevel, mCodec);
 
 				// こいつを先に作るとAES暗号鍵が作られる
-				DataInputter micIn = new EncodingMicInputter(mCodec, mRtpSession);
+				DataInputter micIn = new EncryptMicInputter(mCodec, mRtpSession);
 				PacketOutputter packetOut = new RtpPacketOutputter(0, mLocalInetAddress, mRtpSession);
 
 				List<PacketOutputter.SendTarget> rtpTargetList = mRtpSession.getRtpSendTargetList();

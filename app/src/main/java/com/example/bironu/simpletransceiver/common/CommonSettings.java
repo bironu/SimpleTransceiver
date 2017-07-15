@@ -8,7 +8,6 @@ public interface CommonSettings {
 
 	int DEBUG_LEVEL = Log.DEBUG;
 	
-	String ACTION_NET_CONN_CONNECTIVITY_CHANGE = "android.net.conn.CONNECTIVITY_CHANGE";
 	String BASE_PACKAGE = CommonSettings.class.getPackage().getName();
 
 }

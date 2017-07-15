@@ -17,15 +17,15 @@ import javax.crypto.KeyGenerator;
 import javax.crypto.NoSuchPaddingException;
 import javax.crypto.ShortBufferException;
 
-class EncodingMicInputter
+class EncryptMicInputter
 extends MicInputter
 {
-	public static final String TAG = EncodingMicInputter.class.getSimpleName();
+	public static final String TAG = EncryptMicInputter.class.getSimpleName();
 	
 	private Cipher mCipher;
 	private final RtpSession mRtpSession;
 
-	EncodingMicInputter(Codec codec, RtpSession rtpSession) throws SocketException {
+	EncryptMicInputter(Codec codec, RtpSession rtpSession) throws SocketException {
 		super(codec);
 		mRtpSession = rtpSession;
 		initEncryptCipher();

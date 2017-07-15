@@ -4,9 +4,7 @@ import android.databinding.BaseObservable;
 import android.databinding.Bindable;
 
 import com.example.bironu.simpletransceiver.BR;
-import com.example.bironu.simpletransceiver.common.CommonUtils;
 
-import java.net.InetAddress;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,7 +16,7 @@ public class MainViewModel extends BaseObservable {
     private String mForwardIpAddress;
     private List<String> mForwardIpAddressList = new ArrayList<>();
     private boolean mReceiveRtp;
-    private boolean mSendMode;
+    private boolean mSendStatus;
     private boolean mSpeakerMode;
 
     @Bindable
@@ -39,13 +37,6 @@ public class MainViewModel extends BaseObservable {
     public void setLocalIpAddress(String ipAddress) {
         mLocalIpAddress = ipAddress;
         this.notifyPropertyChanged(BR.localIpAddress);
-    }
-
-    public void setLocalIpAddress() {
-        InetAddress ipAddress = CommonUtils.getIPAddress();
-        if (ipAddress != null) {
-            setLocalIpAddress(ipAddress.toString());
-        }
     }
 
     @Bindable
@@ -77,13 +68,13 @@ public class MainViewModel extends BaseObservable {
     }
 
     @Bindable
-    public boolean isSendMode() {
-        return mSendMode;
+    public boolean isSendStatus() {
+        return mSendStatus;
     }
 
-    public void setSendMode(boolean sendMode) {
-        mSendMode = sendMode;
-        this.notifyPropertyChanged(BR.sendMode);
+    public void setSendStatus(boolean sendStatus) {
+        mSendStatus = sendStatus;
+        this.notifyPropertyChanged(BR.sendStatus);
     }
 
     @Bindable

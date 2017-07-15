@@ -16,16 +16,16 @@ import javax.crypto.ShortBufferException;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 
-public class DecodingSpeakerOutputter
+public class DecryptSpeakerOutputter
 extends SpeakerOutputter
 {
-	public static final String TAG = DecodingSpeakerOutputter.class.getSimpleName();
+	public static final String TAG = DecryptSpeakerOutputter.class.getSimpleName();
 	
 	private Cipher mCipher;
 	private final RtpSession mRtpSession;
     private final RtpPacket mRtpPacket;
 
-	public DecodingSpeakerOutputter(Codec codec, RtpSession rtpSession) {
+	public DecryptSpeakerOutputter(Codec codec, RtpSession rtpSession) {
 		super(codec);
 		mRtpSession = rtpSession;
         mRtpPacket = new RtpPacket(null);

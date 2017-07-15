@@ -6,15 +6,15 @@ import android.content.Intent;
 import android.support.annotation.NonNull;
 
 /**
- *
+ * BroadcastIntentを受け取ってMainModelへ通知するためのクラス。
  */
 public class MainBroadcastReceiver extends BroadcastReceiver {
     public static final String TAG = MainBroadcastReceiver.class.getSimpleName();
     private final MainModel mMainModel;
 
     /**
-     *
-     * @param mainModel
+     * コンストラクタ。
+     * @param mainModel MainActivityのModel
      */
     public MainBroadcastReceiver(@NonNull MainModel mainModel) {
         mMainModel = mainModel;

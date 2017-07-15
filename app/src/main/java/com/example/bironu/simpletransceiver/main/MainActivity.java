@@ -6,18 +6,17 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.databinding.DataBindingUtil;
 import android.media.AudioManager;
+import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 
 import com.example.bironu.simpletransceiver.R;
-import com.example.bironu.simpletransceiver.common.CommonSettings;
 import com.example.bironu.simpletransceiver.databinding.MainActivityBinding;
-import com.example.bironu.simpletransceiver.preference.PreferencesActivity;
 import com.example.bironu.simpletransceiver.service.RtpService;
 
 /**
- *
+ * 起動時最初に表示されるメイン画面。
  */
 public class MainActivity extends Activity {
 	public static final String TAG = MainActivity.class.getSimpleName();
@@ -63,7 +62,7 @@ public class MainActivity extends Activity {
         this.setVolumeControlStream(AudioManager.STREAM_VOICE_CALL);
 
 		IntentFilter filter = new IntentFilter();
-		filter.addAction(CommonSettings.ACTION_NET_CONN_CONNECTIVITY_CHANGE);
+		filter.addAction(ConnectivityManager.CONNECTIVITY_ACTION);
 		filter.addAction(RtpService.ACTION_BEGIN_RTP_RECEIVE);
 		filter.addAction(RtpService.ACTION_END_RTP_RECEIVE);
 		this.registerReceiver(mBroadcastReceiver, filter);
@@ -95,22 +94,10 @@ public class MainActivity extends Activity {
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
-		boolean result;
-		switch(item.getItemId()) {
-		case R.id.action_settings:
-			this.startActivity(new Intent(this, PreferencesActivity.class));
-			result = true;
-			break;
-			
-		case R.id.action_logout:
-			this.finish();
-			result = true;
-			break;
-			
-		default:
-			result = super.onOptionsItemSelected(item);
-			break;
-		}
+        boolean result = mMainController.onOptionItemSelected(item);
+        if(!result) {
+            result = super.onOptionsItemSelected(item);
+        }
 		return result;
 	}
 }
