@@ -8,16 +8,16 @@ import java.net.DatagramPacket;
 import java.net.InetAddress;
 import java.net.SocketException;
 
-public class CtrlPacketReceiveJob
+class CtrlPacketReceiveJob
 implements Job
 {
 	public static final String TAG = CtrlPacketReceiveJob.class.getSimpleName();
 	
 	private final PacketInputter mPacketInputter;
-	private final RtpService.RtpServiceBinder mBinder;
+	private final IRtpServiceBinder mBinder;
 	private final CtrlPacket mCtrlPacket = new CtrlPacket(null, 0);
 
-	public CtrlPacketReceiveJob(int port, InetAddress addr, RtpService.RtpServiceBinder binder) throws SocketException {
+	public CtrlPacketReceiveJob(int port, InetAddress addr, IRtpServiceBinder binder) throws SocketException {
 		mPacketInputter = new PacketInputter(port, addr, CtrlPacketStart.PACKET_LENGTH);
 		mBinder = binder;
 	}

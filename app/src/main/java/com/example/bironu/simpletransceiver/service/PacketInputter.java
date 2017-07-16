@@ -12,7 +12,7 @@ import java.net.SocketTimeoutException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class PacketInputter
+class PacketInputter
 implements DataInputter
 {
 	public static final String TAG = PacketInputter.class.getSimpleName();

@@ -16,7 +16,7 @@ import javax.crypto.ShortBufferException;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 
-public class DecryptSpeakerOutputter
+class DecryptSpeakerOutputter
 extends SpeakerOutputter
 {
 	public static final String TAG = DecryptSpeakerOutputter.class.getSimpleName();
@@ -44,13 +44,7 @@ extends SpeakerOutputter
 			mCipher.doFinal(mRtpPacket.getPacket(), mRtpPacket.getHeaderLength(), mRtpPacket.getPayloadLength(), mRtpPacket.getPacket(), mRtpPacket.getHeaderLength());
 			super.output(buf, length);
 		}
-		catch (ShortBufferException e) {
-			e.printStackTrace();
-		}
-		catch (IllegalBlockSizeException e) {
-			e.printStackTrace();
-		}
-		catch (BadPaddingException e) {
+		catch (ShortBufferException | IllegalBlockSizeException | BadPaddingException e) {
 			e.printStackTrace();
 		}
 	}
@@ -62,25 +56,11 @@ extends SpeakerOutputter
 			mCipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
 			mCipher.init(Cipher.DECRYPT_MODE, sksSpec, ivSpec);
 		}
-		catch (InvalidAlgorithmParameterException e) {
-			e.printStackTrace();
-			mRtpSession.setKey(null);
-			mRtpSession.setIV(null);
-			mCipher = null;
-		}
-		catch (InvalidKeyException e) {
-			e.printStackTrace();
-			mRtpSession.setKey(null);
-			mRtpSession.setIV(null);
-			mCipher = null;
-		}
-		catch (NoSuchAlgorithmException e) {
-			e.printStackTrace();
-			mRtpSession.setKey(null);
-			mRtpSession.setIV(null);
-			mCipher = null;
-		}
-		catch (NoSuchPaddingException e) {
+		catch (InvalidAlgorithmParameterException
+				| InvalidKeyException
+				| NoSuchAlgorithmException
+				| NoSuchPaddingException e)
+		{
 			e.printStackTrace();
 			mRtpSession.setKey(null);
 			mRtpSession.setIV(null);

@@ -21,8 +21,8 @@ import com.example.bironu.simpletransceiver.service.RtpService;
 public class MainActivity extends Activity {
 	public static final String TAG = MainActivity.class.getSimpleName();
 
-    private MainController mMainController;
-    private MainBroadcastReceiver mBroadcastReceiver;
+    private MainActivityController mMainActivityController;
+    private MainActivityBroadcastReceiver mBroadcastReceiver;
 
 	private int mVolumeControlStream;
 
@@ -31,25 +31,25 @@ public class MainActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		MainActivityBinding binding = DataBindingUtil.setContentView(this, R.layout.main_activity);
         MainViewModel mainViewModel = new MainViewModel();
-        MainModel mainModel = new MainModel(this, mainViewModel);
-        mMainController = new MainController(mainModel);
-        mBroadcastReceiver = new MainBroadcastReceiver(mainModel);
+        MainActivityModel mainActivityModel = new MainActivityModel(this, mainViewModel);
+        mMainActivityController = new MainActivityController(mainActivityModel);
+        mBroadcastReceiver = new MainActivityBroadcastReceiver(mainActivityModel);
 
         binding.setMainViewModel(mainViewModel);
 
 		AudioManager am = (AudioManager) this.getSystemService(Context.AUDIO_SERVICE);
         mainViewModel.setSpeakerMode(am.isSpeakerphoneOn());
 
-        binding.checkSpeaker.setOnCheckedChangeListener(mMainController);
-        binding.toggleSend.setOnCheckedChangeListener(mMainController);
-        binding.buttonAddForwardIpAddress.setOnClickListener(mMainController);
-        binding.listForwardIpAddress.setOnItemClickListener(mMainController);
+        binding.checkSpeaker.setOnCheckedChangeListener(mMainActivityController);
+        binding.toggleSend.setOnCheckedChangeListener(mMainActivityController);
+        binding.buttonAddForwardIpAddress.setOnClickListener(mMainActivityController);
+        binding.listForwardIpAddress.setOnItemClickListener(mMainActivityController);
 
         Intent rtpService = new Intent(this.getApplicationContext(), RtpService.class);
         if(savedInstanceState == null) {
             this.startService(rtpService);
         }
-        this.bindService(rtpService, mMainController, Context.BIND_AUTO_CREATE);
+        this.bindService(rtpService, mMainActivityController, Context.BIND_AUTO_CREATE);
 	}
 
 	@Override
@@ -80,7 +80,7 @@ public class MainActivity extends Activity {
 	protected void onDestroy() {
 		super.onDestroy();
 
-		this.unbindService(mMainController);
+		this.unbindService(mMainActivityController);
         if(this.isFinishing()) {
             this.stopService(new Intent(this.getApplicationContext(), RtpService.class));
         }
@@ -94,7 +94,7 @@ public class MainActivity extends Activity {
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
-        boolean result = mMainController.onOptionItemSelected(item);
+        boolean result = mMainActivityController.onOptionItemSelected(item);
         if(!result) {
             result = super.onOptionsItemSelected(item);
         }

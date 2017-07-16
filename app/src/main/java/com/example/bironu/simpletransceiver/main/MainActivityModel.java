@@ -11,6 +11,7 @@ import android.text.TextUtils;
 import com.example.bironu.simpletransceiver.common.CommonUtils;
 import com.example.bironu.simpletransceiver.preference.Preferences;
 import com.example.bironu.simpletransceiver.preference.PreferencesActivity;
+import com.example.bironu.simpletransceiver.service.IRtpServiceBinder;
 import com.example.bironu.simpletransceiver.service.RtpService;
 
 import java.net.InetAddress;
@@ -18,19 +19,19 @@ import java.net.InetAddress;
 /**
  * MainActivityの各種イベントや操作に応じて状態を管理するクラス。
  */
-class MainModel {
-    public static final String TAG = MainModel.class.getSimpleName();
+class MainActivityModel {
+    public static final String TAG = MainActivityModel.class.getSimpleName();
 
     private final Activity mActivity;
     private final MainViewModel mMainViewModel;
-    private RtpService.RtpServiceBinder mRtpServiceBinder;
+    private IRtpServiceBinder mRtpServiceBinder;
 
     /**
      * コンストラクタ。
      * @param activity 管理対象となるActivity
      * @param mainViewModel 管理対象となるViewとbindしたクラス
      */
-    MainModel(Activity activity, MainViewModel mainViewModel) {
+    MainActivityModel(Activity activity, MainViewModel mainViewModel) {
         mActivity = activity;
         mMainViewModel = mainViewModel;
     }
@@ -96,7 +97,7 @@ class MainModel {
      * @param componentName バインドしたサービスの名前？
      * @param iBinder サービスのバインダ
      */
-    void onServiceConnected(ComponentName componentName, RtpService.RtpServiceBinder iBinder) {
+    void onServiceConnected(ComponentName componentName, IRtpServiceBinder iBinder) {
         CommonUtils.logd(TAG, "onServiceConnected : "+componentName);
         mRtpServiceBinder = iBinder;
         mMainViewModel.setForwardIpAddressList(mRtpServiceBinder.getAddressList());

@@ -1,6 +1,6 @@
 package com.example.bironu.simpletransceiver.service;
 
-public class CtrlPacketStart extends CtrlPacket {
+class CtrlPacketStart extends CtrlPacket {
 	public static final int PACKET_LENGTH = 64;
 
 	public CtrlPacketStart(	RtpSession session) {

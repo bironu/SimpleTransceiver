@@ -1,6 +1,5 @@
 package com.example.bironu.simpletransceiver.common;
 
-public interface Job {
+public interface Job extends AutoCloseable {
 	boolean action() throws InterruptedException;
-	void close();
 }

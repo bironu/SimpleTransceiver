@@ -40,7 +40,12 @@ implements Worker
 	@Override
 	public void halt() {
 		mIsWorking.set(false);
-		mJob.close();
+		try {
+			mJob.close();
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 }

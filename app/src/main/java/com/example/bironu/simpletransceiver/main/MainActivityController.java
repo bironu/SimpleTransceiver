@@ -9,29 +9,29 @@ import android.widget.AdapterView;
 import android.widget.CompoundButton;
 
 import com.example.bironu.simpletransceiver.R;
-import com.example.bironu.simpletransceiver.service.RtpService;
+import com.example.bironu.simpletransceiver.service.IRtpServiceBinder;
 
 /**
  * MainActivityの各種操作をハンドリングするクラス。
  */
-class MainController
+class MainActivityController
     implements View.OnClickListener
     , CompoundButton.OnCheckedChangeListener
     , AdapterView.OnItemClickListener
     , ServiceConnection
 {
-    public static final String TAG = MainController.class.getSimpleName();
-    private final MainModel mMainModel;
+    public static final String TAG = MainActivityController.class.getSimpleName();
+    private final MainActivityModel mMainActivityModel;
 
-    MainController(MainModel mainModel) {
-        mMainModel = mainModel;
+    MainActivityController(MainActivityModel mainActivityModel) {
+        mMainActivityModel = mainActivityModel;
     }
 
     @Override
     public void onClick(View view) {
         switch(view.getId()) {
             case R.id.button_add_forward_ip_address:
-                mMainModel.addForwardIpAddress();
+                mMainActivityModel.addForwardIpAddress();
                 break;
 
             default:
@@ -43,7 +43,7 @@ class MainController
     public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
         switch(adapterView.getId()) {
             case R.id.list_forward_ip_address:
-                mMainModel.removeForwardIpAddressItem(i);
+                mMainActivityModel.removeForwardIpAddressItem(i);
                 break;
 
             default:
@@ -55,11 +55,11 @@ class MainController
     public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
         switch(compoundButton.getId()) {
             case R.id.toggle_send:
-                mMainModel.changeSendStatus(b);
+                mMainActivityModel.changeSendStatus(b);
                 break;
 
             case R.id.check_speaker:
-                mMainModel.setSpeakerMode(b);
+                mMainActivityModel.setSpeakerMode(b);
                 break;
 
             default:
@@ -69,24 +69,24 @@ class MainController
 
     @Override
     public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
-        mMainModel.onServiceConnected(componentName, (RtpService.RtpServiceBinder)iBinder);
+        mMainActivityModel.onServiceConnected(componentName, (IRtpServiceBinder)iBinder);
     }
 
     @Override
     public void onServiceDisconnected(ComponentName componentName) {
-        mMainModel.onServiceDisconnected(componentName);
+        mMainActivityModel.onServiceDisconnected(componentName);
     }
 
     public boolean onOptionItemSelected(MenuItem item) {
 		boolean result;
 		switch(item.getItemId()) {
 		case R.id.action_settings:
-            mMainModel.startPreferencesActivity();
+            mMainActivityModel.startPreferencesActivity();
 			result = true;
 			break;
 
 		case R.id.action_logout:
-            mMainModel.finishMainActivity();
+            mMainActivityModel.finishMainActivity();
 			result = true;
 			break;
 

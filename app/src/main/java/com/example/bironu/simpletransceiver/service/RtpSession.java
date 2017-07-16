@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-public class RtpSession
+class RtpSession
 {
 	public static final String TAG = RtpSession.class.getSimpleName();
 	
@@ -21,7 +21,7 @@ public class RtpSession
 	private int mFrameSize;
 	private final Random mRandom;
 	private int mSessionLevel = INVALID_SESSION_LEVEL;
-	private final List<SendTargetAddress> mAddressList = new ArrayList<SendTargetAddress>();
+	private final List<SendTargetAddress> mAddressList = new ArrayList<>();
 	private byte[] mIV;
 	private byte[] mKey;
 
@@ -190,7 +190,7 @@ public class RtpSession
 	}
 	
 	public List<PacketOutputter.SendTarget> getCtrlSendTargetList() {
-		final List<PacketOutputter.SendTarget> result = new ArrayList<PacketOutputter.SendTarget>(mAddressList.size());
+		final List<PacketOutputter.SendTarget> result = new ArrayList<>(mAddressList.size());
 		synchronized(mAddressList) {
 			for(SendTargetAddress address : mAddressList) {
 				try {
@@ -206,7 +206,7 @@ public class RtpSession
 	}
 	
 	public List<PacketOutputter.SendTarget> getRtpSendTargetList() {
-		final List<PacketOutputter.SendTarget> result = new ArrayList<PacketOutputter.SendTarget>(mAddressList.size());
+		final List<PacketOutputter.SendTarget> result = new ArrayList<>(mAddressList.size());
 		synchronized(mAddressList) {
 			for(SendTargetAddress address : mAddressList) {
 				try {
@@ -222,7 +222,7 @@ public class RtpSession
 	}
 	
 	public List<String> getAddressList() {
-		final List<String> result = new ArrayList<String>(mAddressList.size());
+		final List<String> result = new ArrayList<>(mAddressList.size());
 		synchronized(mAddressList) {
 			for(SendTargetAddress address : mAddressList) {
 				result.add(address.mAddress);

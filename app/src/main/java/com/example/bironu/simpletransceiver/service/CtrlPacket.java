@@ -1,6 +1,6 @@
 package com.example.bironu.simpletransceiver.service;
 
-public class CtrlPacket {
+class CtrlPacket {
 	public static final int CTRL_TYPE_START = 1;
 	public static final int CTRL_TYPE_STOP = 2;
 

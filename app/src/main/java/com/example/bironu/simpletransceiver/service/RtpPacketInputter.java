@@ -8,7 +8,7 @@ import java.net.DatagramPacket;
 import java.net.InetAddress;
 import java.net.SocketException;
 
-public class RtpPacketInputter
+class RtpPacketInputter
 extends PacketInputter
 {
 	public static final String TAG = RtpPacketInputter.class.getSimpleName();

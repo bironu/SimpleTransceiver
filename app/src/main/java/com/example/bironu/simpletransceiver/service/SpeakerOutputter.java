@@ -13,7 +13,7 @@ import com.example.bironu.simpletransceiver.rtp.RtpPacket;
 
 import java.io.IOException;
 
-public class SpeakerOutputter
+class SpeakerOutputter
 implements DataOutputter
 {
 	public static final String TAG = SpeakerOutputter.class.getSimpleName();

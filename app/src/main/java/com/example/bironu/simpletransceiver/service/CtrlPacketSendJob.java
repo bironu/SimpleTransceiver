@@ -7,7 +7,7 @@ import java.net.InetAddress;
 import java.net.SocketException;
 import java.util.List;
 
-public class CtrlPacketSendJob
+class CtrlPacketSendJob
 implements Job
 {
 	private static final int REPEAT_COUNT = 3;

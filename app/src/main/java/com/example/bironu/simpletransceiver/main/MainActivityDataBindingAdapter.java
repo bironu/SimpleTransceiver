@@ -9,7 +9,7 @@ import java.util.List;
 /**
  * Bindableアノテーションだけではまかないきれない各種バインドメソッドをまとめるクラス。
  */
-public class MainDataBindingAdapter {
+public class MainActivityDataBindingAdapter {
 
     /**
      * 送信先IPアドレスリストが更新された時に呼ばれるメソッド。
