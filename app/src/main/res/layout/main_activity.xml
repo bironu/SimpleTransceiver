@@ -1,89 +1,94 @@
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
+
     <data>
-        <import type="android.view.View"/>
-        <import type="java.util.List"/>
-        <variable name="mainViewModel" type="com.example.bironu.simpletransceiver.main.MainViewModel"/>
+
+        <import type="android.view.View" />
+
+        <import type="java.util.List" />
+
+        <variable
+            name="mainViewModel"
+            type="com.example.bironu.simpletransceiver.activitys.main.presentation.MainViewModel" />
     </data>
 
-    <RelativeLayout
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:paddingBottom="@dimen/activity_vertical_margin"
-    android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context="com.example.bironu.simpletransceiver.main.MainActivity" >
+    <RelativeLayout xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:paddingBottom="@dimen/activity_vertical_margin"
+        android:paddingLeft="@dimen/activity_horizontal_margin"
+        android:paddingRight="@dimen/activity_horizontal_margin"
+        android:paddingTop="@dimen/activity_vertical_margin"
+        tools:context=".activitys.main.MainActivity">
 
-    <View
-        android:id="@+id/view_vcenter"
-        android:layout_width="wrap_content"
-        android:layout_height="1dp"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentEnd="true"
-        android:layout_centerVertical="true"
-        android:background="@android:color/black" />
+        <View
+            android:id="@+id/view_vcenter"
+            android:layout_width="wrap_content"
+            android:layout_height="1dp"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentStart="true"
+            android:layout_centerVertical="true"
+            android:background="@android:color/black" />
 
-    <TextView
-        android:id="@+id/text_local_ip_address"
-        android:text="@{mainViewModel.localIpAddress}"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+        <TextView
+            android:id="@+id/text_local_ip_address"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@{mainViewModel.localIpAddress}" />
 
-    <ToggleButton
-        android:id="@+id/toggle_send"
-        android:checked="@{mainViewModel.sendStatus}"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/text_local_ip_address"
-        android:textOff="@string/send_off"
-        android:textOn="@string/send_on" />
+        <ToggleButton
+            android:id="@+id/toggle_send"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/text_local_ip_address"
+            android:checked="@{mainViewModel.sendStatus}"
+            android:textOff="@string/send_off"
+            android:textOn="@string/send_on" />
 
-    <TextView
-        android:id="@+id/text_rtp_receive_status"
-        android:visibility="@{mainViewModel.receiveRtp?View.VISIBLE:View.GONE}"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/toggle_send"
-        android:layout_alignParentStart="true"
-        android:text="@string/rtp_receive" />
+        <TextView
+            android:id="@+id/text_rtp_receive_status"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_below="@id/toggle_send"
+            android:text="@string/rtp_receive"
+            android:visibility="@{mainViewModel.receiveRtp?View.VISIBLE:View.GONE}" />
 
-    <CheckBox
-        android:id="@+id/check_speaker"
-        android:checked="@{mainViewModel.speakerMode}"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/view_vcenter"
-        android:text="@string/speaker" />
+        <CheckBox
+            android:id="@+id/check_speaker"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/view_vcenter"
+            android:checked="@{mainViewModel.speakerMode}"
+            android:text="@string/speaker" />
 
-    <Button
-        android:id="@+id/button_add_forward_ip_address"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/check_speaker"
-        android:labelFor="@+id/edit_foward_ip_address"
-        android:text="@string/add_foward_ip_address" />
+        <Button
+            android:id="@+id/button_add_forward_ip_address"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/check_speaker"
+            android:labelFor="@+id/edit_foward_ip_address"
+            android:text="@string/add_foward_ip_address" />
 
-    <EditText
-        android:id="@+id/edit_forward_ip_address"
-        android:text="@={mainViewModel.forwardIpAddress}"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignBaseline="@+id/button_add_forward_ip_address"
-        android:layout_alignParentEnd="true"
-        android:layout_toEndOf="@+id/button_add_forward_ip_address"
-        android:inputType="text" />
+        <EditText
+            android:id="@+id/edit_forward_ip_address"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBaseline="@+id/button_add_forward_ip_address"
+            android:layout_alignParentEnd="true"
+            android:layout_toEndOf="@+id/button_add_forward_ip_address"
+            android:inputType="text"
+            android:text="@={mainViewModel.forwardIpAddress}" />
 
-    <ListView
-        android:id="@+id/list_forward_ip_address"
-        app:items="@{mainViewModel.forwardIpAddressList}"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentStart="true"
-        android:layout_below="@+id/button_add_forward_ip_address" />
+        <ListView
+            android:id="@+id/list_forward_ip_address"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentStart="true"
+            android:layout_below="@+id/button_add_forward_ip_address"
+            app:items="@{mainViewModel.forwardIpAddressCursor}" />
 
-</RelativeLayout>
-    </layout>
+    </RelativeLayout>
+</layout>

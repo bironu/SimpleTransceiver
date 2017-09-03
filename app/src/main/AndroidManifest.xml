@@ -14,7 +14,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".main.MainActivity"
+            android:name=".activitys.main.MainActivity"
             android:label="@string/app_name"
             android:screenOrientation="portrait" >
             <intent-filter>
@@ -22,9 +22,12 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".preference.PreferencesActivity"
+        <activity android:name=".activitys.preference.PreferencesActivity"
             android:label="@string/app_name" />
         <service android:name=".service.RtpService" />
+        <provider
+            android:name=".data.db.SimpleTransceiverContentProvider"
+            android:authorities="com.example.bironu.simpletransceiver.data.db.simpletransceivercontentprovider" />
     </application>
 
 </manifest>

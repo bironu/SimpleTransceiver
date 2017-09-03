@@ -29,6 +29,7 @@ public class RtpService extends Service
 	public void onCreate() {
 		super.onCreate();
         mBinder = new RtpServiceBinderImpl(this.getApplicationContext());
+		mBinder.setLocalIpAddress();
 		mBroadcastReceiver = new RtpServiceBroadcastReceiver(mBinder);
 		IntentFilter filter = new IntentFilter();
 		filter.addAction(ConnectivityManager.CONNECTIVITY_ACTION);
@@ -37,13 +38,11 @@ public class RtpService extends Service
 
 	@Override
 	public int onStartCommand(Intent intent, int flags, int startId) {
-		mBinder.setLocalIpAddress();
 		return START_STICKY;
 	}
 
 	@Override
 	public void onDestroy() {
-		super.onDestroy();
 		mBinder.endRtpReceiver();
 		mBinder.endRtpSender();
 		mBinder.endCtrlReceiver();
@@ -55,5 +54,7 @@ public class RtpService extends Service
         }
 		this.unregisterReceiver(mBroadcastReceiver);
 		mBroadcastReceiver = null;
+
+		super.onDestroy();
 	}
 }

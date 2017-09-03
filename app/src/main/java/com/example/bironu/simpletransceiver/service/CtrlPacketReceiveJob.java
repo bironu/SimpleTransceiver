@@ -1,7 +1,8 @@
 package com.example.bironu.simpletransceiver.service;
 
 import com.example.bironu.simpletransceiver.common.CommonUtils;
-import com.example.bironu.simpletransceiver.common.Job;
+import com.example.bironu.simpletransceiver.io.Job;
+import com.example.bironu.simpletransceiver.io.PacketInputter;
 
 import java.io.IOException;
 import java.net.DatagramPacket;

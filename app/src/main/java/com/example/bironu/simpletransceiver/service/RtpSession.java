@@ -2,13 +2,9 @@ package com.example.bironu.simpletransceiver.service;
 
 import com.example.bironu.simpletransceiver.codecs.Codec;
 
-import java.net.InetAddress;
-import java.net.UnknownHostException;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Random;
 
-class RtpSession
+public class RtpSession
 {
 	public static final String TAG = RtpSession.class.getSimpleName();
 	
@@ -21,21 +17,8 @@ class RtpSession
 	private int mFrameSize;
 	private final Random mRandom;
 	private int mSessionLevel = INVALID_SESSION_LEVEL;
-	private final List<SendTargetAddress> mAddressList = new ArrayList<>();
 	private byte[] mIV;
 	private byte[] mKey;
-
-	
-	public static class SendTargetAddress {
-		public SendTargetAddress(String address, int ctrlPort, int rtpPort) {
-			mAddress = address;
-			mCtrlPort = ctrlPort;
-			mRtpPort = rtpPort;
-		}
-		public final String mAddress;
-		public final int mRtpPort;
-		public final int mCtrlPort;
-	}
 
 	public RtpSession() {
 		this.mRandom = new Random(System.currentTimeMillis() + Thread.currentThread().getId() - Thread.currentThread().hashCode());
@@ -163,74 +146,6 @@ class RtpSession
 		endSession();
 	}
 	
-	public void addSendTarget(String address, int ctrlPort, int rtpPort) {
-		SendTargetAddress target = new SendTargetAddress(address, ctrlPort, rtpPort);
-		synchronized(mAddressList) {
-			mAddressList.add(target);
-		}
-	}
-	
-	public void removeSendTarget(String address, int ctrlPort, int rtpPort) {
-		SendTargetAddress target = new SendTargetAddress(address, ctrlPort, rtpPort);
-		synchronized(mAddressList) {
-			mAddressList.remove(target);
-		}
-	}
-	
-	public void removeSendTarget(int location) {
-		synchronized(mAddressList) {
-			mAddressList.remove(location);
-		}
-	}
-	
-	public void clearSendTarget() {
-		synchronized(mAddressList) {
-			mAddressList.clear();
-		}
-	}
-	
-	public List<PacketOutputter.SendTarget> getCtrlSendTargetList() {
-		final List<PacketOutputter.SendTarget> result = new ArrayList<>(mAddressList.size());
-		synchronized(mAddressList) {
-			for(SendTargetAddress address : mAddressList) {
-				try {
-					PacketOutputter.SendTarget target = new PacketOutputter.SendTarget(InetAddress.getByName(address.mAddress), address.mCtrlPort);
-					result.add(target);
-				}
-				catch (UnknownHostException e) {
-					e.printStackTrace();
-				}
-			}
-		}
-		return result;
-	}
-	
-	public List<PacketOutputter.SendTarget> getRtpSendTargetList() {
-		final List<PacketOutputter.SendTarget> result = new ArrayList<>(mAddressList.size());
-		synchronized(mAddressList) {
-			for(SendTargetAddress address : mAddressList) {
-				try {
-					PacketOutputter.SendTarget target = new PacketOutputter.SendTarget(InetAddress.getByName(address.mAddress), address.mRtpPort);
-					result.add(target);
-				}
-				catch (UnknownHostException e) {
-					e.printStackTrace();
-				}
-			}
-		}
-		return result;
-	}
-	
-	public List<String> getAddressList() {
-		final List<String> result = new ArrayList<>(mAddressList.size());
-		synchronized(mAddressList) {
-			for(SendTargetAddress address : mAddressList) {
-				result.add(address.mAddress);
-			}
-		}
-		return result;
-	}
-
 	public synchronized void setKey(byte[] key) {
 		mKey = key;
 	}

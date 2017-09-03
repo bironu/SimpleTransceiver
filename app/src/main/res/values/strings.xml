@@ -9,6 +9,7 @@
     <string name="ip_address">IPアドレス</string>
     <string name="filter">filter</string>
     <string name="rtp_receive">RTP receive</string>
+    <string name="no_bind_rtp_service_message">RTPサービスと接続していません。</string>
 
     <string name="pref_key_rtp_port">pref_key_rtp_port</string>
     <string name="pref_default_value_rtp_port">22222</string>

@@ -2,22 +2,31 @@ package com.example.bironu.simpletransceiver.service;
 
 import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
 import android.os.Binder;
 import android.support.annotation.NonNull;
 
 import com.example.bironu.simpletransceiver.codecs.Codec;
 import com.example.bironu.simpletransceiver.codecs.ulaw;
 import com.example.bironu.simpletransceiver.common.CommonUtils;
-import com.example.bironu.simpletransceiver.common.DataInputter;
-import com.example.bironu.simpletransceiver.common.DataOutputter;
-import com.example.bironu.simpletransceiver.common.DataRelayer;
-import com.example.bironu.simpletransceiver.common.Job;
-import com.example.bironu.simpletransceiver.common.JobWorker;
-import com.example.bironu.simpletransceiver.common.Worker;
-import com.example.bironu.simpletransceiver.preference.Preferences;
+import com.example.bironu.simpletransceiver.data.Entity;
+import com.example.bironu.simpletransceiver.data.db.SendTargetTable;
+import com.example.bironu.simpletransceiver.data.preference.Preferences;
+import com.example.bironu.simpletransceiver.io.DataInputter;
+import com.example.bironu.simpletransceiver.io.DataOutputter;
+import com.example.bironu.simpletransceiver.io.DataRelayer;
+import com.example.bironu.simpletransceiver.io.DecryptSpeakerOutputter;
+import com.example.bironu.simpletransceiver.io.EncryptMicInputter;
+import com.example.bironu.simpletransceiver.io.Job;
+import com.example.bironu.simpletransceiver.io.JobWorker;
+import com.example.bironu.simpletransceiver.io.PacketOutputter;
+import com.example.bironu.simpletransceiver.io.RtpPacketInputter;
+import com.example.bironu.simpletransceiver.io.RtpPacketOutputter;
+import com.example.bironu.simpletransceiver.io.Worker;
 
 import java.net.InetAddress;
 import java.net.SocketException;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
@@ -33,6 +42,7 @@ implements IRtpServiceBinder
     public static final String TAG = RtpServiceBinderImpl.class.getSimpleName();
 
     private final Context mContext;
+    private final RtpServiceRepository mRepository;
     private final ExecutorService mExec = Executors.newCachedThreadPool();
     private final List<Worker> mWorkerList = new ArrayList<>();
     private Codec mCodec;
@@ -41,13 +51,16 @@ implements IRtpServiceBinder
     private DataRelayer mPacket2Speaker;
     private Worker mCtrlPacketReceiver;
     private final RtpSession mRtpSession = new RtpSession();
+    private final List<Entity.SendTarget> mSendTargetList = new ArrayList<>();
 
     RtpServiceBinderImpl(@NonNull Context context) {
         mContext = context;
+        mRepository = new RtpServiceRepositoryImpl(context);
         mCodec = new ulaw();
         mCodec.open();
     }
 
+    @Override
     public boolean beginRtpReceiver(CtrlPacketStart start, InetAddress remoteAddress) {
         boolean result = false;
         try {
@@ -67,13 +80,14 @@ implements IRtpServiceBinder
                 DataOutputter speakerOut = new DecryptSpeakerOutputter(mCodec, mRtpSession);
 
                 mPacket2Speaker = new DataRelayer(packetIn);
-                List<PacketOutputter.SendTarget> targetList = mRtpSession.getRtpSendTargetList();
-                if(targetList != null && targetList.size() > 0) {
-                    PacketOutputter packetOut = new PacketOutputter(0, mLocalInetAddress);
-                    for(PacketOutputter.SendTarget target : targetList) {
-                        packetOut.addSendTarget(target.address, target.port);
+                for (Entity.SendTarget target : mSendTargetList) {
+                    try {
+                        PacketOutputter packetOut = new PacketOutputter(0, mLocalInetAddress, target.getRtpPort(), InetAddress.getByName(target.getIpAddressString()));
+                        mPacket2Speaker.addDataOutputter(packetOut);
                     }
-                    mPacket2Speaker.addDataOutputter(packetOut);
+                    catch (UnknownHostException e) {
+                        e.printStackTrace();
+                    }
                 }
                 mPacket2Speaker.addDataOutputter(speakerOut);
                 mWorkerList.add(mPacket2Speaker);
@@ -87,6 +101,7 @@ implements IRtpServiceBinder
         return result;
     }
 
+    @Override
     public void endRtpReceiver(CtrlPacketStop stop) {
         CommonUtils.logd(TAG, "endRtpReceiver session ssrc = "+mRtpSession.getSsrc()+", packet ssrc = "+stop.getSsrc());
         if(mRtpSession.getSsrc() == stop.getSsrc()) {
@@ -95,6 +110,7 @@ implements IRtpServiceBinder
         }
     }
 
+    @Override
     public void endRtpReceiver() {
         if(mPacket2Speaker != null) {
             mContext.sendBroadcast(new Intent(RtpService.ACTION_END_RTP_RECEIVE));
@@ -105,6 +121,7 @@ implements IRtpServiceBinder
         }
     }
 
+    @Override
     public boolean beginRtpSender() {
         boolean result = false;
         try{
@@ -120,21 +137,24 @@ implements IRtpServiceBinder
 
                 // こいつを先に作るとAES暗号鍵が作られる
                 DataInputter micIn = new EncryptMicInputter(mCodec, mRtpSession);
-                PacketOutputter packetOut = new RtpPacketOutputter(0, mLocalInetAddress, mRtpSession);
-
-                List<PacketOutputter.SendTarget> rtpTargetList = mRtpSession.getRtpSendTargetList();
-                for(PacketOutputter.SendTarget target : rtpTargetList) {
-                    packetOut.addSendTarget(target.address, target.port);
+                mMic2Packet = new DataRelayer(micIn);
+                for (Entity.SendTarget target : mSendTargetList) {
+                    try {
+                        PacketOutputter packetOut = new RtpPacketOutputter(0, mLocalInetAddress, target.getRtpPort(), InetAddress.getByName(target.getIpAddressString()), mRtpSession);
+                        mMic2Packet.addDataOutputter(packetOut);
+                    }
+                    catch (UnknownHostException e) {
+                        e.printStackTrace();
+                    }
                 }
+
+                mWorkerList.add(mMic2Packet);
+                mExec.execute(mMic2Packet);
 
                 CtrlPacketStart packet = new CtrlPacketStart(mRtpSession);
                 CommonUtils.logd(TAG, "sendCtrlPacketStart");
                 sendCtrlPacket(packet);
 
-                mMic2Packet = new DataRelayer(micIn);
-                mMic2Packet.addDataOutputter(packetOut);
-                mWorkerList.add(mMic2Packet);
-                mExec.execute(mMic2Packet);
                 result = true;
             }
             else {
@@ -144,12 +164,10 @@ implements IRtpServiceBinder
         catch(SocketException e) {
             e.printStackTrace();
         }
-//		catch (UnknownHostException e) {
-//			e.printStackTrace();
-//		}
         return result;
     }
 
+    @Override
     public void endRtpSender() {
         CommonUtils.logd(TAG, "endRtpSender call");
         if(mMic2Packet != null) {
@@ -163,6 +181,7 @@ implements IRtpServiceBinder
         }
     }
 
+    @Override
     public void beginCtrlReceiver() {
         Preferences prefs = new Preferences(mContext);
         final int ctrlPort = prefs.getCtrlPort();
@@ -178,6 +197,7 @@ implements IRtpServiceBinder
         }
     }
 
+    @Override
     public void endCtrlReceiver() {
         CommonUtils.logd(TAG, "endCtrlReceiver() call.");
         if(mCtrlPacketReceiver != null) {
@@ -188,36 +208,8 @@ implements IRtpServiceBinder
         }
     }
 
-    public void addSendTarget(String address, int ctrlPort, int rtpPort) {
-        mRtpSession.addSendTarget(address, ctrlPort, rtpPort);
-    }
-
-    public void removeSendTarget(String address, int ctrlPort, int rtpPort) {
-        mRtpSession.removeSendTarget(address, ctrlPort, rtpPort);
-    }
-
-    public void removeSendTarget(int location) {
-        mRtpSession.removeSendTarget(location);
-    }
-
-    public void clearSendTarget() {
-        mRtpSession.clearSendTarget();
-    }
-
-    public List<PacketOutputter.SendTarget> getCtrlSendTargetList() {
-        return mRtpSession.getCtrlSendTargetList();
-    }
-
-    public List<PacketOutputter.SendTarget> getRtpSendTargetList() {
-        return mRtpSession.getRtpSendTargetList();
-    }
-
-    public List<String> getAddressList() {
-        return mRtpSession.getAddressList();
-    }
-
     public synchronized void setLocalIpAddress() {
-        InetAddress localInetAddress = CommonUtils.getIPAddress();
+        InetAddress localInetAddress = mRepository.getLocalIpAddress();
         CommonUtils.logd(TAG, "setLocalIpAddress old address = "+mLocalInetAddress+", new address"+localInetAddress);
         if(localInetAddress != null) {
             if(!localInetAddress.equals(mLocalInetAddress)) {
@@ -238,8 +230,7 @@ implements IRtpServiceBinder
     public synchronized void sendCtrlPacket(CtrlPacket packet) {
         CommonUtils.logd(TAG, "sendCtrlPacket call");
         try {
-            CtrlPacketSendJob job = new CtrlPacketSendJob(mLocalInetAddress, packet);
-            job.addSendTarget(mRtpSession.getCtrlSendTargetList());
+            CtrlPacketSendJob job = new CtrlPacketSendJob(0, mLocalInetAddress, mSendTargetList, packet);
             JobWorker sender = new JobWorker(job);
             mWorkerList.add(sender);
             mExec.execute(sender);
@@ -267,6 +258,27 @@ implements IRtpServiceBinder
         if(mCodec != null) {
             mCodec.close();
             mCodec = null;
+        }
+    }
+
+    @Override
+    public void onCursorLoadFinish(int id, Cursor cursor) {
+        switch (id) {
+            case SendTargetTable.LOADER_ID:
+                mSendTargetList.clear();
+                if (cursor != null && cursor.getCount() > 0) {
+                    final int rtpPort = mRepository.getRtpPort();
+                    final int ctrlPort = mRepository.getCtrlPort();
+                    final int indexName = cursor.getColumnIndex(SendTargetTable.COLUMN_NAME);
+                    final int indexAddress = cursor.getColumnIndex(SendTargetTable.COLUMN_ADDRESS);
+                    while (cursor.moveToNext()) {
+                        mSendTargetList.add(new Entity.SendTarget(cursor.getString(indexName), cursor.getString(indexAddress), rtpPort, ctrlPort));
+                    }
+                }
+                break;
+
+            default:
+                break;
         }
     }
 }
