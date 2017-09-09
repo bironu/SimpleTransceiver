@@ -16,9 +16,11 @@ import com.example.bironu.simpletransceiver.data.db.SendTargetTable;
 /**
  * Bindableアノテーションだけではまかないきれない各種バインドメソッドをまとめるクラス。
  */
-public class MainDataBindingAdapter {
+public class MainDataBindingAdapter
+{
 
-    private static class ForwardIpListCursorAdapter extends CursorAdapter {
+    private static class ForwardIpListCursorAdapter extends CursorAdapter
+    {
 
         public ForwardIpListCursorAdapter(Context context, Cursor c, int flags) {
             super(context, c, flags);
@@ -37,14 +39,14 @@ public class MainDataBindingAdapter {
 
     /**
      * 送信先IPアドレスリストが更新された時に呼ばれるメソッド。
+     *
      * @param listView 送信先IPアドレスリストを表示しているListView
-     * @param cursor 更新された送信先IPアドレスリスト
+     * @param cursor   更新された送信先IPアドレスリスト
      */
     @BindingAdapter("items")
     public static void setForwardIpList(ListView listView, Cursor cursor) {
-        @SuppressWarnings("unchecked")
         ListAdapter adapter = listView.getAdapter();
-        if(!(adapter instanceof CursorAdapter)) {
+        if (!(adapter instanceof CursorAdapter)) {
             adapter = new ForwardIpListCursorAdapter(listView.getContext(), cursor, CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER);
             listView.setAdapter(adapter);
         }

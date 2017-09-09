@@ -7,7 +7,7 @@ import android.os.Binder;
 import android.support.annotation.NonNull;
 
 import com.example.bironu.simpletransceiver.codecs.Codec;
-import com.example.bironu.simpletransceiver.codecs.ulaw;
+import com.example.bironu.simpletransceiver.codecs.Speex;
 import com.example.bironu.simpletransceiver.common.CommonUtils;
 import com.example.bironu.simpletransceiver.data.Entity;
 import com.example.bironu.simpletransceiver.data.db.SendTargetTable;
@@ -56,7 +56,7 @@ implements IRtpServiceBinder
     RtpServiceBinderImpl(@NonNull Context context) {
         mContext = context;
         mRepository = new RtpServiceRepositoryImpl(context);
-        mCodec = new ulaw();
+        mCodec = new Speex();
         mCodec.open();
     }
 

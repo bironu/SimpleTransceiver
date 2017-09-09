@@ -7,9 +7,10 @@ import android.content.Intent;
 import com.example.bironu.simpletransceiver.common.CommonUtils;
 
 /**
- * BroadcastIntentを受け取ってMainModelへ通知するためのクラス。
+ * BroadcastIntentを受け取ってControllerへ通知するためのクラス。
  */
-public class MainBroadcastReceiver extends BroadcastReceiver {
+public class MainBroadcastReceiver extends BroadcastReceiver
+{
     public static final String TAG = MainBroadcastReceiver.class.getSimpleName();
     private final MainController mController;
 

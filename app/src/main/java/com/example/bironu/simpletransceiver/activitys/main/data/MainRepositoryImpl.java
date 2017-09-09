@@ -2,21 +2,19 @@ package com.example.bironu.simpletransceiver.activitys.main.data;
 
 import android.net.Uri;
 
-import com.example.bironu.simpletransceiver.activitys.main.domain.MainRepository;
 import com.example.bironu.simpletransceiver.data.DataStore;
 import com.example.bironu.simpletransceiver.data.db.CursorLoadListener;
 
 import java.net.InetAddress;
 
 /**
- *
- UseCaseで取得したいデータのCRUD相当のI/Fを記述する
- データ取得に必要なDataStoreへデータ処理のリクエストを行う
- Repositoryは、データを扱うI/Fを定義するがどうやってデータを扱うか知らない
-
+ * UseCaseで取得したいデータのCRUD相当のI/Fを記述する。
+ * データ取得に必要なDataStoreへデータ処理のリクエストを行う。
+ * Repositoryは、データを扱うI/Fを定義するがどうやってデータを扱うか知らない。
  */
 
-public class MainRepositoryImpl implements MainRepository {
+public class MainRepositoryImpl implements MainRepository
+{
     private final DataStore mDataStore;
 
     public MainRepositoryImpl(DataStore dataStore) {

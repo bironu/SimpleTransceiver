@@ -7,9 +7,12 @@ import android.databinding.Bindable;
 import com.example.bironu.simpletransceiver.BR;
 
 /**
- *
+ * 各種Viewとbindingされたプロパティ群。
  */
-public class MainViewModel extends BaseObservable implements MainPresenterImpl.SetViewModel, MainController.GetViewModel{
+public class MainViewModel extends BaseObservable
+        implements SetViewModel
+        , GetViewModel
+{
     private String mLocalIpAddress;
     private String mForwardIpAddress;
     private boolean mReceiveRtp;

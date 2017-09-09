@@ -44,13 +44,7 @@ extends MicInputter
 				result = cryptoLength;
 			}
 		}
-		catch (ShortBufferException e) {
-			e.printStackTrace();
-		}
-		catch (IllegalBlockSizeException e) {
-			e.printStackTrace();
-		}
-		catch (BadPaddingException e) {
+		catch (ShortBufferException | IllegalBlockSizeException | BadPaddingException e) {
 			e.printStackTrace();
 		}
 		return result;
@@ -89,19 +83,7 @@ extends MicInputter
 //				Log.d(TAG, sb.toString());
 			}
 		}
-		catch (InvalidKeyException e) {
-			e.printStackTrace();
-			mRtpSession.setKey(null);
-			mRtpSession.setIV(null);
-			mCipher = null;
-		}
-		catch (NoSuchAlgorithmException e) {
-			e.printStackTrace();
-			mRtpSession.setKey(null);
-			mRtpSession.setIV(null);
-			mCipher = null;
-		}
-		catch (NoSuchPaddingException e) {
+		catch (InvalidKeyException | NoSuchAlgorithmException | NoSuchPaddingException e) {
 			e.printStackTrace();
 			mRtpSession.setKey(null);
 			mRtpSession.setIV(null);

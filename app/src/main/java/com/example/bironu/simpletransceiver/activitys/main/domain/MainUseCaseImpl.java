@@ -4,22 +4,22 @@ import android.database.Cursor;
 import android.support.annotation.NonNull;
 import android.text.TextUtils;
 
-import com.example.bironu.simpletransceiver.activitys.FinishActivityEvent;
-import com.example.bironu.simpletransceiver.activitys.StartPreferenceActivityEvent;
+import com.example.bironu.simpletransceiver.activitys.main.data.MainRepository;
+import com.example.bironu.simpletransceiver.activitys.main.presentation.MainPresenter;
 import com.example.bironu.simpletransceiver.data.db.SendTargetTable;
+import com.example.bironu.simpletransceiver.event.FinishActivityEvent;
+import com.example.bironu.simpletransceiver.event.StartPreferenceActivityEvent;
 import com.example.bironu.simpletransceiver.service.IRtpServiceBinder;
 
 import org.greenrobot.eventbus.EventBus;
 
 /**
- *
- ユースケースに必要なロジック処理を記述する
- どのデータをどのように取得するかここで実装する
- UIには直接関与しない(View,ViewControllerから直接参照されない)
-
+ * ユースケースに必要なロジック処理を記述する。
+ * どのデータをどのように取得するかここで実装する。
+ * UIには直接関与しない(Presenter,Viewから直接参照されない)。
  */
-
-public class MainUseCaseImpl implements MainUseCase {
+public class MainUseCaseImpl implements MainUseCase
+{
     private final MainRepository mRepository;
     private final MainPresenter mPresenter;
     private IRtpServiceBinder mBinder;
@@ -117,15 +117,15 @@ public class MainUseCaseImpl implements MainUseCase {
     @Override
     public void onCursorLoadFinish(int id, Cursor cursor) {
         if (mBinder != null) {
-            mBinder.onCursorLoadFinish(id, cursor);
+            mBinder.onCursorLoadFinish(id, cursor); // TODO Listを作ってから渡す
         }
-        switch(id) {
-            case SendTargetTable.LOADER_ID:
-                mPresenter.setForwardIpAddressCursor(cursor);
-                break;
+        switch (id) {
+        case SendTargetTable.LOADER_ID:
+            mPresenter.setForwardIpAddressCursor(cursor);
+            break;
 
-            default:
-                break;
+        default:
+            break;
         }
     }
 }

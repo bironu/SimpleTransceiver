@@ -2,27 +2,13 @@ package com.example.bironu.simpletransceiver.activitys.main.presentation;
 
 import android.database.Cursor;
 
-import com.example.bironu.simpletransceiver.activitys.main.domain.MainPresenter;
-
 import java.net.InetAddress;
 
 /**
- *
- Viewからイベントを受け取り、必要があればイベントに応じたUseCaseを実行する
- UseCaseから受け取ったデータをViewへ渡す
- Viewがどうなっているか知らない
+ * UseCaseから受け取ったデータをViewへ渡す。
+ * Viewがどうなっているか知らない。
  */
-
 public class MainPresenterImpl implements MainPresenter {
-
-    public interface SetViewModel {
-        void setIsReceiveRtp(boolean receiveRtp);
-        void setLocalIpAddress(String ipAddress);
-        void setForwardIpAddress(String forwardIpAddress);
-        void setForwardIpAddressCursor(Cursor cursor);
-        void setSendStatus(boolean sendStatus);
-        void setSpeakerMode(boolean checkSpeaker);
-    }
 
     private final SetViewModel mSetter;
 
@@ -44,7 +30,6 @@ public class MainPresenterImpl implements MainPresenter {
     public void updateLocalIpAddress(InetAddress ipAddress) {
         if (ipAddress != null) {
             mSetter.setLocalIpAddress(ipAddress.toString());
-
         }
         else {
             mSetter.setLocalIpAddress(null);

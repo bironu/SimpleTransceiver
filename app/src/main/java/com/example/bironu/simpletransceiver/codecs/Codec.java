@@ -21,8 +21,9 @@
 package com.example.bironu.simpletransceiver.codecs;
 
 
-public interface Codec {
-//	PT	符号化方式	A/V	Hz	内容
+public interface Codec
+{
+    //	PT	符号化方式	A/V	Hz	内容
 //	0	PCMU	A	8000	ITU-T G.711 A-law
 //	1	1016	A	8000	US標準1016
 //	2	G721	A	8000	ITU-T G.721
@@ -54,23 +55,30 @@ public interface Codec {
 //	72-76	reserved	N/A	N/A	N/A
 //	77-95	unassigned	-	-	-
 //	96-127	dynamic	-	-	動的割り当て
-int TYPE_ULAW = 0;
-	int TYPE_GSM = 3;
-	int TYPE_ALAW = 8;
-	int TYPE_G722 = 9;
-	int TYPE_G729 = 18;
-	int TYPE_SPEEX = 97;
-	int TYPE_BV16 = 106;
-	int TYPE_SILK8 = 117;
-	int TYPE_SILK16 = 119;
-	int TYPE_SILK24 = 120;
+    int TYPE_ULAW = 0;
+    int TYPE_GSM = 3;
+    int TYPE_ALAW = 8;
+    int TYPE_G722 = 9;
+    int TYPE_G729 = 18;
+    int TYPE_SPEEX = 97;
+    int TYPE_BV16 = 106;
+    int TYPE_SILK8 = 117;
+    int TYPE_SILK16 = 119;
+    int TYPE_SILK24 = 120;
 
-	int decode(byte encoded[], int offset, short lin[], int size);
-	int encode(short lin[], int offset, byte alaw[], int frames);
-	int samp_rate();
-	int frame_size();
-	int open();
-	void close();
-	String name();
-	int number();
+    int decode(byte encoded[], int offset, short lin[], int size);
+
+    int encode(short lin[], int offset, byte alaw[], int frames);
+
+    int samp_rate();
+
+    int frame_size();
+
+    int open();
+
+    void close();
+
+    String name();
+
+    int number();
 }

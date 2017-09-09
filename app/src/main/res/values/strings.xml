@@ -6,8 +6,6 @@
     <string name="send_on">送信ON</string>
     <string name="send_off">送信OFF</string>
     <string name="add_foward_ip_address">転送先追加</string>
-    <string name="ip_address">IPアドレス</string>
-    <string name="filter">filter</string>
     <string name="rtp_receive">RTP receive</string>
     <string name="no_bind_rtp_service_message">RTPサービスと接続していません。</string>
 
