@@ -50,7 +50,8 @@ public class MainActivity extends Activity
         MainViewModel viewModel = new MainViewModel();
         binding.setMainViewModel(viewModel);
 
-        //this.setActionBar(binding.myToolbar);
+        this.setActionBar(binding.myToolbar);
+        this.getActionBar().setDisplayHomeAsUpEnabled(true);
 
         DataStore dataStore = new DataStore(context);
         MainRepository repository = new MainRepositoryImpl(dataStore);

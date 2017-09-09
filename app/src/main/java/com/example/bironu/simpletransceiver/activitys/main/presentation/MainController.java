@@ -121,6 +121,7 @@ public class MainController
             result = true;
             break;
 
+        case android.R.id.home:
         case R.id.action_logout:
             mUseCase.finishMainActivity();
             result = true;
