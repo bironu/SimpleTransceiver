@@ -12,17 +12,17 @@ import java.util.ArrayList;
 import java.util.List;
 
 class CtrlPacketSendJob
-implements Job
+        implements Job
 {
-	private static final int REPEAT_COUNT = 3;
-	
-	private final List<PacketOutputter> mPacketOutputterList;
-	private final CtrlPacket mPacket;
-	private int mCounter = 0;
+    private static final int REPEAT_COUNT = 3;
 
-	public CtrlPacketSendJob(int srcPort, InetAddress srcAddress, List<Entity.SendTarget> targetList, CtrlPacket packet) throws SocketException {
-		mPacketOutputterList = new ArrayList<>(targetList.size());
-		for (Entity.SendTarget target : targetList) {
+    private final List<PacketOutputter> mPacketOutputterList;
+    private final CtrlPacket mPacket;
+    private int mCounter = 0;
+
+    public CtrlPacketSendJob(int srcPort, InetAddress srcAddress, List<Entity.SendTarget> targetList, CtrlPacket packet) throws SocketException {
+        mPacketOutputterList = new ArrayList<>(targetList.size());
+        for (Entity.SendTarget target : targetList) {
             try {
                 mPacketOutputterList.add(new PacketOutputter(srcPort, srcAddress, target.getCtrlPort(), InetAddress.getByName(target.getIpAddressString())));
             }
@@ -30,26 +30,26 @@ implements Job
                 e.printStackTrace();
             }
         }
-		mPacket = packet;
-	}
+        mPacket = packet;
+    }
 
-	@Override
-	public boolean action() throws InterruptedException {
-		boolean result = false;
-		try {
+    @Override
+    public boolean action() throws InterruptedException {
+        boolean result = false;
+        try {
             for (PacketOutputter outputter : mPacketOutputterList) {
                 outputter.output(mPacket.getBuffer(), mPacket.getLength());
             }
-			result = ++mCounter >= REPEAT_COUNT;
-		}
-		catch (IOException e) {
-			e.printStackTrace();
-		}
-		return result;
-	}
+            result = ++mCounter >= REPEAT_COUNT;
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+        }
+        return result;
+    }
 
-	@Override
-	public void close() {
+    @Override
+    public void close() {
         for (PacketOutputter outputter : mPacketOutputterList) {
             outputter.close();
         }

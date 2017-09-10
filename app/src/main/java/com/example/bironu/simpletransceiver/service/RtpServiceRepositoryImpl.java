@@ -8,14 +8,13 @@ import com.example.bironu.simpletransceiver.data.db.CursorLoadListener;
 import java.net.InetAddress;
 
 /**
- *
- UseCaseで取得したいデータのCRUD相当のI/Fを記述する
- データ取得に必要なDataStoreへデータ処理のリクエストを行う
- Repositoryは、データを扱うI/Fを定義するがどうやってデータを扱うか知らない
-
+ * UseCaseで取得したいデータのCRUD相当のI/Fを記述する
+ * データ取得に必要なDataStoreへデータ処理のリクエストを行う
+ * Repositoryは、データを扱うI/Fを定義するがどうやってデータを扱うか知らない
  */
 
-public class RtpServiceRepositoryImpl implements RtpServiceRepository {
+public class RtpServiceRepositoryImpl implements RtpServiceRepository
+{
     private final DataStore mDataStore;
 
     public RtpServiceRepositoryImpl(Context context) {

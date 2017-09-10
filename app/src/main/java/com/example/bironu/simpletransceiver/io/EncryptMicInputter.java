@@ -19,46 +19,46 @@ import javax.crypto.NoSuchPaddingException;
 import javax.crypto.ShortBufferException;
 
 public class EncryptMicInputter
-extends MicInputter
+        extends MicInputter
 {
-	public static final String TAG = EncryptMicInputter.class.getSimpleName();
-	
-	private Cipher mCipher;
-	private final RtpSession mRtpSession;
+    public static final String TAG = EncryptMicInputter.class.getSimpleName();
 
-	public EncryptMicInputter(Codec codec, RtpSession rtpSession) throws SocketException {
-		super(codec);
-		mRtpSession = rtpSession;
-		initEncryptCipher();
-	}
+    private Cipher mCipher;
+    private final RtpSession mRtpSession;
 
-	@Override
-	public int input() throws IOException {
-		final int encResult = super.input();
-		int result = 0;
-		try {
-			if(mCipher != null){
-				byte[] buf = this.getBuffer();
-				int cryptoLength = mCipher.doFinal(buf, 0, encResult, buf, 0);
-				CommonUtils.logd(TAG, "crypto length = " + cryptoLength + " byte");
-				result = cryptoLength;
-			}
-		}
-		catch (ShortBufferException | IllegalBlockSizeException | BadPaddingException e) {
-			e.printStackTrace();
-		}
-		return result;
-	}
-	
+    public EncryptMicInputter(Codec codec, RtpSession rtpSession) throws SocketException {
+        super(codec);
+        mRtpSession = rtpSession;
+        initEncryptCipher();
+    }
+
+    @Override
+    public int input() throws IOException {
+        final int encResult = super.input();
+        int result = 0;
+        try {
+            if (mCipher != null) {
+                byte[] buf = this.getBuffer();
+                int cryptoLength = mCipher.doFinal(buf, 0, encResult, buf, 0);
+                CommonUtils.logd(TAG, "crypto length = " + cryptoLength + " byte");
+                result = cryptoLength;
+            }
+        }
+        catch (ShortBufferException | IllegalBlockSizeException | BadPaddingException e) {
+            e.printStackTrace();
+        }
+        return result;
+    }
+
     private void initEncryptCipher() {
-		Key key = genKey();
-		try {
-			if(key != null) {
-				mCipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
-				mCipher.init(Cipher.ENCRYPT_MODE, key);
-				mRtpSession.setKey(key.getEncoded());
-				mRtpSession.setIV(mCipher.getIV());
-				
+        Key key = genKey();
+        try {
+            if (key != null) {
+                mCipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
+                mCipher.init(Cipher.ENCRYPT_MODE, key);
+                mRtpSession.setKey(key.getEncoded());
+                mRtpSession.setIV(mCipher.getIV());
+
 //				StringBuilder sb = new StringBuilder(1024);
 //
 //				byte[] bkey = mRtpSession.getKey();
@@ -81,31 +81,31 @@ extends MicInputter
 //					sb.append('\n');
 //				}
 //				Log.d(TAG, sb.toString());
-			}
-		}
-		catch (InvalidKeyException | NoSuchAlgorithmException | NoSuchPaddingException e) {
-			e.printStackTrace();
-			mRtpSession.setKey(null);
-			mRtpSession.setIV(null);
-			mCipher = null;
-		}
-	}
-	
-	// 暗号化アルゴリズムに応じた鍵を生成する
-	private static Key genKey() {
-		Key key = null;
-		try {
-			KeyGenerator generator = KeyGenerator.getInstance("AES");
-			// 乱数の発生源を作成します 指定できるのはSHA1PRNGのみ
-			SecureRandom random = SecureRandom.getInstance("SHA1PRNG");
-			// 第一引数にキー長のbit数を指定します
-			generator.init(256, random);
-			key = generator.generateKey();
-		}
-		catch (NoSuchAlgorithmException e) {
-			e.printStackTrace();
-		}
-		return key;
-	}
+            }
+        }
+        catch (InvalidKeyException | NoSuchAlgorithmException | NoSuchPaddingException e) {
+            e.printStackTrace();
+            mRtpSession.setKey(null);
+            mRtpSession.setIV(null);
+            mCipher = null;
+        }
+    }
+
+    // 暗号化アルゴリズムに応じた鍵を生成する
+    private static Key genKey() {
+        Key key = null;
+        try {
+            KeyGenerator generator = KeyGenerator.getInstance("AES");
+            // 乱数の発生源を作成します 指定できるのはSHA1PRNGのみ
+            SecureRandom random = SecureRandom.getInstance("SHA1PRNG");
+            // 第一引数にキー長のbit数を指定します
+            generator.init(256, random);
+            key = generator.generateKey();
+        }
+        catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        }
+        return key;
+    }
 
 }

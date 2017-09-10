@@ -9,27 +9,27 @@ import java.net.InetAddress;
 import java.net.SocketException;
 
 public class RtpPacketOutputter
-extends PacketOutputter
+        extends PacketOutputter
 {
-	public static final String TAG = RtpPacketOutputter.class.getSimpleName();
-	
-	private final RtpPacket mRtpPacket;
-	private final RtpSession mRtpSession;
-	
-	public RtpPacketOutputter(int srcPort, InetAddress srcAddress, int dstPort, InetAddress dstAddress, RtpSession rtpSession) throws SocketException {
-		super(srcPort, srcAddress, dstPort, dstAddress);
-		mRtpPacket = new RtpPacket(new byte[CommonSettings.DATAGRAM_PACKET_SIZE]);
-		mRtpSession = rtpSession;
-	}
+    public static final String TAG = RtpPacketOutputter.class.getSimpleName();
 
-	@Override
-	public void output(byte[] buf, int length) throws IOException {
-		mRtpPacket.setVersion(2);
-		mRtpPacket.setPayloadType(mRtpSession.getPayloadType());
-		mRtpPacket.setSsrc(mRtpSession.getSsrc());
-		mRtpPacket.setTimestamp(mRtpSession.getNextTimeStamp());
-		mRtpPacket.setSequenceNumber(mRtpSession.getNextSeqNum());
-		mRtpPacket.setPayload(buf, length);
-		super.output(mRtpPacket.getPacket(), mRtpPacket.getPacketLength());
-	}
+    private final RtpPacket mRtpPacket;
+    private final RtpSession mRtpSession;
+
+    public RtpPacketOutputter(int srcPort, InetAddress srcAddress, int dstPort, InetAddress dstAddress, RtpSession rtpSession) throws SocketException {
+        super(srcPort, srcAddress, dstPort, dstAddress);
+        mRtpPacket = new RtpPacket(new byte[CommonSettings.DATAGRAM_PACKET_SIZE]);
+        mRtpSession = rtpSession;
+    }
+
+    @Override
+    public void output(byte[] buf, int length) throws IOException {
+        mRtpPacket.setVersion(2);
+        mRtpPacket.setPayloadType(mRtpSession.getPayloadType());
+        mRtpPacket.setSsrc(mRtpSession.getSsrc());
+        mRtpPacket.setTimestamp(mRtpSession.getNextTimeStamp());
+        mRtpPacket.setSequenceNumber(mRtpSession.getNextSeqNum());
+        mRtpPacket.setPayload(buf, length);
+        super.output(mRtpPacket.getPacket(), mRtpPacket.getPacketLength());
+    }
 }

@@ -18,55 +18,55 @@ import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 
 public class DecryptSpeakerOutputter
-extends SpeakerOutputter
+        extends SpeakerOutputter
 {
-	public static final String TAG = DecryptSpeakerOutputter.class.getSimpleName();
-	
-	private Cipher mCipher;
-	private final RtpSession mRtpSession;
+    public static final String TAG = DecryptSpeakerOutputter.class.getSimpleName();
+
+    private Cipher mCipher;
+    private final RtpSession mRtpSession;
     private final RtpPacket mRtpPacket;
 
-	public DecryptSpeakerOutputter(Codec codec, RtpSession rtpSession) {
-		super(codec);
-		mRtpSession = rtpSession;
+    public DecryptSpeakerOutputter(Codec codec, RtpSession rtpSession) {
+        super(codec);
+        mRtpSession = rtpSession;
         mRtpPacket = new RtpPacket(null);
-		initDecryptCipher();
-	}
+        initDecryptCipher();
+    }
 
-	StringBuilder sb = new StringBuilder(6 * 160);
-	@Override
-	public void output(byte[] buf, int length) throws IOException {
-		if(mCipher == null) {
-			return;
-		}
-		try {
-			// bufはRTPパケットそのまんま
+    StringBuilder sb = new StringBuilder(6 * 160);
+
+    @Override
+    public void output(byte[] buf, int length) throws IOException {
+        if (mCipher == null) {
+            return;
+        }
+        try {
+            // bufはRTPパケットそのまんま
             mRtpPacket.setBuffer(buf, length);
-			mCipher.doFinal(mRtpPacket.getPacket(), mRtpPacket.getHeaderLength(), mRtpPacket.getPayloadLength(), mRtpPacket.getPacket(), mRtpPacket.getHeaderLength());
-			super.output(buf, length);
-		}
-		catch (ShortBufferException | IllegalBlockSizeException | BadPaddingException e) {
-			e.printStackTrace();
-		}
-	}
+            mCipher.doFinal(mRtpPacket.getPacket(), mRtpPacket.getHeaderLength(), mRtpPacket.getPayloadLength(), mRtpPacket.getPacket(), mRtpPacket.getHeaderLength());
+            super.output(buf, length);
+        }
+        catch (ShortBufferException | IllegalBlockSizeException | BadPaddingException e) {
+            e.printStackTrace();
+        }
+    }
 
-	private void initDecryptCipher() {
-		SecretKeySpec sksSpec = new SecretKeySpec(mRtpSession.getKey(), "AES");
-		IvParameterSpec ivSpec = new IvParameterSpec(mRtpSession.getIV());
-		try {
-			mCipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
-			mCipher.init(Cipher.DECRYPT_MODE, sksSpec, ivSpec);
-		}
-		catch (InvalidAlgorithmParameterException
-				| InvalidKeyException
-				| NoSuchAlgorithmException
-				| NoSuchPaddingException e)
-		{
-			e.printStackTrace();
-			mRtpSession.setKey(null);
-			mRtpSession.setIV(null);
-			mCipher = null;
-		}
+    private void initDecryptCipher() {
+        SecretKeySpec sksSpec = new SecretKeySpec(mRtpSession.getKey(), "AES");
+        IvParameterSpec ivSpec = new IvParameterSpec(mRtpSession.getIV());
+        try {
+            mCipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
+            mCipher.init(Cipher.DECRYPT_MODE, sksSpec, ivSpec);
+        }
+        catch (InvalidAlgorithmParameterException
+                | InvalidKeyException
+                | NoSuchAlgorithmException
+                | NoSuchPaddingException e) {
+            e.printStackTrace();
+            mRtpSession.setKey(null);
+            mRtpSession.setIV(null);
+            mCipher = null;
+        }
 //		byte[] bkey = mRtpSession.getKey();
 //		Log.d(TAG, "encoded key length = "+bkey.length);
 //		for(int i = 0; i < bkey.length; i += 4) {
@@ -87,5 +87,5 @@ extends SpeakerOutputter
 //			sb.append('\n');
 //		}
 //		Log.d(TAG, sb.toString());
-	}
+    }
 }

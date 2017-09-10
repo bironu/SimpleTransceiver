@@ -37,7 +37,7 @@ import java.util.concurrent.TimeUnit;
  * RtpServiceの処理中枢。
  */
 class RtpServiceBinderImpl extends Binder
-implements IRtpServiceBinder
+        implements IRtpServiceBinder
 {
     public static final String TAG = RtpServiceBinderImpl.class.getSimpleName();
 
@@ -64,8 +64,8 @@ implements IRtpServiceBinder
     public boolean beginRtpReceiver(CtrlPacketStart start, InetAddress remoteAddress) {
         boolean result = false;
         try {
-            CommonUtils.logd(TAG, "beginRtpReceiver session level = "+mRtpSession.getLevel()+", pakcet session level = "+start.getSessionLevel());
-            if(mRtpSession.beginSession(start.getSessionLevel())) {
+            CommonUtils.logd(TAG, "beginRtpReceiver session level = " + mRtpSession.getLevel() + ", pakcet session level = " + start.getSessionLevel());
+            if (mRtpSession.beginSession(start.getSessionLevel())) {
                 CommonUtils.logd(TAG, "beginRtpReceiver OK!!!!!!!");
                 // 送信or受信を判定して強制終了　セッション無しなら何もせず
                 endRtpReceiver();
@@ -103,8 +103,8 @@ implements IRtpServiceBinder
 
     @Override
     public void endRtpReceiver(CtrlPacketStop stop) {
-        CommonUtils.logd(TAG, "endRtpReceiver session ssrc = "+mRtpSession.getSsrc()+", packet ssrc = "+stop.getSsrc());
-        if(mRtpSession.getSsrc() == stop.getSsrc()) {
+        CommonUtils.logd(TAG, "endRtpReceiver session ssrc = " + mRtpSession.getSsrc() + ", packet ssrc = " + stop.getSsrc());
+        if (mRtpSession.getSsrc() == stop.getSsrc()) {
             endRtpReceiver();
             sendCtrlPacket(stop);
         }
@@ -112,7 +112,7 @@ implements IRtpServiceBinder
 
     @Override
     public void endRtpReceiver() {
-        if(mPacket2Speaker != null) {
+        if (mPacket2Speaker != null) {
             mContext.sendBroadcast(new Intent(RtpService.ACTION_END_RTP_RECEIVE));
             mPacket2Speaker.halt();
             mWorkerList.remove(mPacket2Speaker);
@@ -124,11 +124,11 @@ implements IRtpServiceBinder
     @Override
     public boolean beginRtpSender() {
         boolean result = false;
-        try{
+        try {
             Preferences prefs = new Preferences(mContext);
             final int accountLevel = prefs.getAccountLevel();
-            CommonUtils.logd(TAG, "beginRtpSender session level = "+mRtpSession.getLevel()+", account level = "+accountLevel);
-            if(mRtpSession.beginSession(accountLevel)) {
+            CommonUtils.logd(TAG, "beginRtpSender session level = " + mRtpSession.getLevel() + ", account level = " + accountLevel);
+            if (mRtpSession.beginSession(accountLevel)) {
                 CommonUtils.logd(TAG, "beginRtpSender OK!!!!!!!");
                 // 送信or受信を判定して強制終了　セッション無しなら何もせず
                 endRtpReceiver();
@@ -161,7 +161,7 @@ implements IRtpServiceBinder
                 CommonUtils.logd(TAG, "beginRtpSender NG!!!!!!!");
             }
         }
-        catch(SocketException e) {
+        catch (SocketException e) {
             e.printStackTrace();
         }
         return result;
@@ -170,7 +170,7 @@ implements IRtpServiceBinder
     @Override
     public void endRtpSender() {
         CommonUtils.logd(TAG, "endRtpSender call");
-        if(mMic2Packet != null) {
+        if (mMic2Packet != null) {
             mMic2Packet.halt();
             mWorkerList.remove(mMic2Packet);
             mMic2Packet = null;
@@ -200,7 +200,7 @@ implements IRtpServiceBinder
     @Override
     public void endCtrlReceiver() {
         CommonUtils.logd(TAG, "endCtrlReceiver() call.");
-        if(mCtrlPacketReceiver != null) {
+        if (mCtrlPacketReceiver != null) {
             mCtrlPacketReceiver.halt();
             CommonUtils.logd(TAG, "mCtrlPacketReceiver.halt() call");
             mWorkerList.remove(mCtrlPacketReceiver);
@@ -210,9 +210,9 @@ implements IRtpServiceBinder
 
     public synchronized void setLocalIpAddress() {
         InetAddress localInetAddress = mRepository.getLocalIpAddress();
-        CommonUtils.logd(TAG, "setLocalIpAddress old address = "+mLocalInetAddress+", new address"+localInetAddress);
-        if(localInetAddress != null) {
-            if(!localInetAddress.equals(mLocalInetAddress)) {
+        CommonUtils.logd(TAG, "setLocalIpAddress old address = " + mLocalInetAddress + ", new address" + localInetAddress);
+        if (localInetAddress != null) {
+            if (!localInetAddress.equals(mLocalInetAddress)) {
                 mLocalInetAddress = localInetAddress;
                 endRtpSender();
                 endRtpReceiver();
@@ -242,12 +242,12 @@ implements IRtpServiceBinder
 
     @Override
     public void close() throws Exception {
-        for(Worker worker : mWorkerList) {
+        for (Worker worker : mWorkerList) {
             worker.halt();
         }
         mExec.shutdown();
         try {
-            if(!mExec.awaitTermination(1000, TimeUnit.MILLISECONDS)) {
+            if (!mExec.awaitTermination(1000, TimeUnit.MILLISECONDS)) {
                 mExec.shutdownNow();
             }
         }
@@ -255,7 +255,7 @@ implements IRtpServiceBinder
             e.printStackTrace();
             mExec.shutdownNow();
         }
-        if(mCodec != null) {
+        if (mCodec != null) {
             mCodec.close();
             mCodec = null;
         }
@@ -264,21 +264,21 @@ implements IRtpServiceBinder
     @Override
     public void onCursorLoadFinish(int id, Cursor cursor) {
         switch (id) {
-            case SendTargetTable.LOADER_ID:
-                mSendTargetList.clear();
-                if (cursor != null && cursor.getCount() > 0) {
-                    final int rtpPort = mRepository.getRtpPort();
-                    final int ctrlPort = mRepository.getCtrlPort();
-                    final int indexName = cursor.getColumnIndex(SendTargetTable.COLUMN_NAME);
-                    final int indexAddress = cursor.getColumnIndex(SendTargetTable.COLUMN_ADDRESS);
-                    while (cursor.moveToNext()) {
-                        mSendTargetList.add(new Entity.SendTarget(cursor.getString(indexName), cursor.getString(indexAddress), rtpPort, ctrlPort));
-                    }
+        case SendTargetTable.LOADER_ID:
+            mSendTargetList.clear();
+            if (cursor != null && cursor.getCount() > 0) {
+                final int rtpPort = mRepository.getRtpPort();
+                final int ctrlPort = mRepository.getCtrlPort();
+                final int indexName = cursor.getColumnIndex(SendTargetTable.COLUMN_NAME);
+                final int indexAddress = cursor.getColumnIndex(SendTargetTable.COLUMN_ADDRESS);
+                while (cursor.moveToNext()) {
+                    mSendTargetList.add(new Entity.SendTarget(cursor.getString(indexName), cursor.getString(indexAddress), rtpPort, ctrlPort));
                 }
-                break;
+            }
+            break;
 
-            default:
-                break;
+        default:
+            break;
         }
     }
 }

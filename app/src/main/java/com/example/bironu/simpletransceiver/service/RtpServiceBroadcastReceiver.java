@@ -10,7 +10,8 @@ import com.example.bironu.simpletransceiver.common.CommonUtils;
 /**
  *
  */
-class RtpServiceBroadcastReceiver extends BroadcastReceiver {
+class RtpServiceBroadcastReceiver extends BroadcastReceiver
+{
     public static final String TAG = RtpServiceBroadcastReceiver.class.getSimpleName();
 
     private final IRtpServiceBinder mBinder;
@@ -23,7 +24,7 @@ class RtpServiceBroadcastReceiver extends BroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
         final String action = intent.getAction();
         CommonUtils.logd(TAG, "receive " + action);
-        if(ConnectivityManager.CONNECTIVITY_ACTION.equals(action)) {
+        if (ConnectivityManager.CONNECTIVITY_ACTION.equals(action)) {
             mBinder.setLocalIpAddress();
         }
     }

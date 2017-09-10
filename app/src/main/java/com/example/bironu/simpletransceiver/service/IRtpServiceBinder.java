@@ -9,14 +9,23 @@ import java.net.InetAddress;
 /**
  * RtpService操作用バインダーのインターフェイス。
  */
-public interface IRtpServiceBinder extends AutoCloseable, CursorLoadListener, IBinder {
+public interface IRtpServiceBinder extends AutoCloseable, CursorLoadListener, IBinder
+{
     boolean beginRtpReceiver(CtrlPacketStart start, InetAddress remoteAddress);
+
     void endRtpReceiver(CtrlPacketStop stop);
+
     void endRtpReceiver();
+
     boolean beginRtpSender();
+
     void endRtpSender();
+
     void beginCtrlReceiver();
+
     void endCtrlReceiver();
+
     void setLocalIpAddress();
+
     void sendCtrlPacket(CtrlPacket packet);
 }
