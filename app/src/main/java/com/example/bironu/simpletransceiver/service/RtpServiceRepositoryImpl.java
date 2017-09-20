@@ -37,11 +37,6 @@ public class RtpServiceRepositoryImpl implements RtpServiceRepository
     }
 
 //    @Override
-//    public Cursor getSendTargetCursor() {
-//        return mDataStore.getSendTargetCursor();
-//    }
-//
-//    @Override
 //    public List<Entity.SendTarget> getSendTargetList() {
 //        List<Entity.SendTarget> result = null;
 //        try(final Cursor cursor = getSendTargetCursor()) {
@@ -58,9 +53,4 @@ public class RtpServiceRepositoryImpl implements RtpServiceRepository
 //        }
 //        return result;
 //    }
-
-    @Override
-    public void setCursorLoadListener(CursorLoadListener listener) {
-        mDataStore.setCursorLoadListener(listener);
-    }
 }
